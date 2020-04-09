@@ -14,7 +14,7 @@ from Account import PlayerAccount
 __name__ = 'IVM '
 __author__ = 'The Illusion '
 __copyright__ = 'Copyright 2020, The Illusion'
-__credits__ = ['The Illusion, RaJCel']
+__credits__ = ['The Illusion', 'RaJCel']
 __maintainer__ = 'The Illusion'
 __status__ = 'Dev'
 __version__ = '0.1'
