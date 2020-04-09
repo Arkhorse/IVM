@@ -32,10 +32,12 @@ class _Config(object):
         self.tankrows = 3
         self.fireEnabled = True
         self.stunEnabled = True
+        self.replayEnabled = True
         self.debug = True
         self.Cdebug = False
         self.confdata = {
             'debug': False,
+            'Replays': True,
             'Sounds': {
                 'stunSoundEnabled': False, 
                 'fireSoundEnabled': False, 
@@ -84,6 +86,7 @@ def _chkfile():
             _config.tankrows = data['Carousels']['Rows']
             _config.stunEnabled = data['Sounds']['stunSoundEnabled']
             _config.fireEnabled = data['Sounds']['fireSoundEnabled']
+            _config.replayEnabled = data['Replays']
             if data['debug']:
                 _config.debug = True
             else:
@@ -94,6 +97,9 @@ def _chkfile():
         _makeconfig()
 
 _chkfile()
+if _config.replayEnabled == True:
+    import BattleReplay
+    print '[IVM] Battle Replays Enabled'
 
 """
 IVM Carousel Handler
