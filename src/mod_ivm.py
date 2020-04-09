@@ -99,7 +99,7 @@ _chkfile()
 IVM Carousel Handler
 """
 
-if _config.carouselsEnabled == True and _config.carouselsSize == False:
+if _config.carouselsEnabled == True: #and _config.carouselsSize == False:
     old_as_rowsCountS = TankCarouselMeta.as_rowCountS
 
     def new_as_rowCountS(self, value):
