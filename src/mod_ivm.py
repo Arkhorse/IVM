@@ -97,7 +97,7 @@ def _chkfile():
             _config.fireEnabled = data['Sounds']['fireSoundEnabled']
             _config.replayEnabled = data['Replays']
             _config.credits = data['Credits']
-            _config.hintPanelEnabled = data['Battle']['questHint']
+            _config.questhintPanelEnabled = data['Battle']['questHint']
             if data['debug']:
                 _config.debug = True
             else:
@@ -133,7 +133,8 @@ else:
 """
 IVM Battle Hints Handler
 """
-if _config.hintPanelEnabled == False:
+#Mission Hint Panel
+if _config.questhintPanelEnabled == False:
     old_quest_Hint = PreBattleHintPlugin._PreBattleHintPlugin__canDisplayQuestHint
     def ivm_questHint(self):
         old_quest_Hint(self)
