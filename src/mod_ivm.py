@@ -6,6 +6,9 @@ from debug_utils import LOG_CURRENT_EXCEPTION
 
 #Game Imports
 from gui.Scaleform.daapi.view.meta.TankCarouselMeta import TankCarouselMeta
+#Hints Panel
+from gui.Scaleform.daapi.view.battle.shared.hint_panel.plugins import PreBattleHintPlugin
+#Sounds
 from gui.Scaleform.daapi.view.battle.shared.destroy_timers_panel import DestroyTimersPanel
 from SoundGroups import g_instance as SoundGroups_g_instance
 from gui import SystemMessages
@@ -17,7 +20,7 @@ __copyright__ = 'Copyright 2020, The Illusion'
 __credits__ = ['The Illusion', 'RaJCel']
 __maintainer__ = 'The Illusion'
 __status__ = 'Dev'
-__version__ = '0.1'
+__version__ = '0.2'
 _DIR_ = './mods/configs/IVM'
 _FILE_ = './mods/configs/IVM/IVM.json'
 
@@ -30,6 +33,7 @@ class _Config(object):
         self.carouselsEnabled = True
         self.carouselsSize = 'Large'
         self.tankrows = 3
+        self.hintPanelEnabled = True
         self.fireEnabled = True
         self.stunEnabled = True
         self.replayEnabled = True
@@ -40,6 +44,9 @@ class _Config(object):
             'Credits': False,
             'debug': False,
             'Replays': True,
+            'Battle': {
+                'questHint': True,
+            },
             'Sounds': {
                 'stunSoundEnabled': False, 
                 'fireSoundEnabled': False, 
@@ -90,6 +97,7 @@ def _chkfile():
             _config.fireEnabled = data['Sounds']['fireSoundEnabled']
             _config.replayEnabled = data['Replays']
             _config.credits = data['Credits']
+            _config.hintPanelEnabled = data['Battle']['questHint']
             if data['debug']:
                 _config.debug = True
             else:
@@ -120,6 +128,20 @@ if _config.carouselsEnabled == True: #and _config.carouselsSize == False:
     print '[IVM] Tank Carousels Loaded with ' + str(_config.tankrows) + ' rows'
 else:
     print '[IVM] Tank Carousels Not Enabled'
+    pass
+
+"""
+IVM Battle Hints Handler
+"""
+if _config.hintPanelEnabled == False:
+    old_quest_Hint = PreBattleHintPlugin._PreBattleHintPlugin__canDisplayQuestHint
+    def ivm_questHint(self):
+        old_quest_Hint(self)
+        return None
+    PreBattleHintPlugin._PreBattleHintPlugin__canDisplayQuestHint = ivm_questHint
+    print '[IVM][LOAD] Missions Hint Panel Disabled'
+else:
+    print '[IVM] Missions Hint Panel Enabled'
     pass
 
 """
