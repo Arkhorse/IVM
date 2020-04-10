@@ -1,0 +1,18 @@
+{
+    "Carousels": {
+        "Rows": 3,
+        "Enabled": false
+    },
+    "Battle": {
+        /// Turn this to false if you dont want the panel
+        "questHint": true
+    },
+    "Replays": true,
+    /// If you want to know who helped, turn this to true
+    "Credits": false,
+    "debug": false,
+    "Sounds": {
+        "fireSoundEnabled": false,
+        "stunSoundEnabled": false
+    }
+}

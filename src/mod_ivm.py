@@ -28,12 +28,11 @@ print '[IVM] ' + str(__name__) + 'By ' + str(__maintainer__) + ' Version ' + str
 
 class _Config(object):
 
-
     def __init__(self):
         self.carouselsEnabled = True
         self.carouselsSize = 'Large'
         self.tankrows = 3
-        self.hintPanelEnabled = True
+        self.questhintPanelEnabled = True
         self.fireEnabled = True
         self.stunEnabled = True
         self.replayEnabled = True
