@@ -34,8 +34,10 @@ class _Config(object):
         self.stunEnabled = True
         self.replayEnabled = True
         self.debug = True
+        self.credits = True
         self.Cdebug = False
         self.confdata = {
+            'Credits': False,
             'debug': False,
             'Replays': True,
             'Sounds': {
@@ -87,6 +89,7 @@ def _chkfile():
             _config.stunEnabled = data['Sounds']['stunSoundEnabled']
             _config.fireEnabled = data['Sounds']['fireSoundEnabled']
             _config.replayEnabled = data['Replays']
+            _config.credits = data['Credits']
             if data['debug']:
                 _config.debug = True
             else:
@@ -173,3 +176,9 @@ if _config.fireEnabled == True:
 else:
     print '[IVM] Fire Sound Not Loaded'
     pass
+
+_LOAD_ = '[IVM][LOAD] IVM loaded with: ' + 'Carousels Enabled:', str(_config.carouselsEnabled), 'Rows:', str(_config.tankrows), 'Fire Sound Enabled:', str(_config.fireEnabled), 'Stun Sound Enabled:', str(_config.stunEnabled), 'Replays Enabled:', str(_config.replayEnabled)
+if _config.credits == True:
+    print _LOAD_, __credits__
+else:
+    print _LOAD_
