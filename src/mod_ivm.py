@@ -2,9 +2,10 @@
 from json import dump as jsonDump, dumps as jsonDumps, load as jsonLoad
 import os
 from os import path
-from debug_utils import LOG_CURRENT_EXCEPTION
+import Keys
 
 #Game Imports
+from debug_utils import LOG_CURRENT_EXCEPTION
 from gui.Scaleform.daapi.view.meta.TankCarouselMeta import TankCarouselMeta
 #Hints Panel
 from gui.Scaleform.daapi.view.battle.shared.hint_panel.plugins import PreBattleHintPlugin
@@ -25,6 +26,61 @@ _DIR_ = './mods/configs/IVM'
 _FILE_ = './mods/configs/IVM/IVM.json'
 
 print '[IVM] ' + str(__name__) + 'By ' + str(__maintainer__) + ' Version ' + str(__status__), str(__version__)
+
+modLinkage = 'mod_ivm'
+template = {
+    'modDisplayName': 'Improved Visuals and Sounds',
+    'settingsVersion': 0.2,
+    'enabled': True,
+    'column1:': [
+        {
+            'type': 'Label',
+            'text': 'In Battle Options',
+        },
+        {
+            'type': 'CheckBox',
+            'text': 'Missions Hint UI',
+            'value': False,
+            'tooltip': '{BODY} Turn this off if you dont want the missions hint UI at the start of the battle {/ BODY}',
+            'varName': 'questHint'
+        },
+        {
+            'type': 'Label',
+            'text': 'Sound Options'
+        },
+        {
+            'type': 'CheckBox',
+            'text': 'Stun Sound',
+            'value': False,
+            'tooltip': '{HEADER} Turn this on if you want a Voice Over for when you are stunned. {/ HEADER} {BODY} This is the DeadPool one {/ BODY}',
+            'varName': 'stunSoundEnabled'
+        },
+        {
+            'type': 'CheckBox',
+            'text': 'Fire Sound',
+            'value': False,
+            'tooltip': '{HEADER} Turn this on if you want a Voice Over for when you are set on fire. {/ HEADER} {BODY} This is the DeadPool one. {/ BODY}',
+            'varName': 'fireSoundEnabled'
+        }, 
+    ],
+    'column2': [
+        {
+            'type': 'Label',
+            'text': 'In Garage Options'
+        },
+        {
+            'type': 'Slider',
+            'text': 'The number of carousel rows you want',
+            'minimum': 1,
+            'maximum': 12,
+            'value': 2,
+            'format': '{{{1}}}',
+            'varName': 'tankrows'
+        }
+    ]
+}
+
+
 
 class _Config(object):
 
