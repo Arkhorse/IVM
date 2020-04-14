@@ -80,6 +80,42 @@ template = {
     ]
 }
 
+settings = {
+            'Credits': False,
+            'debug': False,
+            'Replays': True,
+            'Battle': {
+                'questHint': True,
+            },
+            'Sounds': {
+                'stunSoundEnabled': False, 
+                'fireSoundEnabled': False, 
+            },
+            'Carousels': {
+                'Enabled': False,
+#                'Large': True,
+                'Rows': 3, 
+            }
+        }
+def onButtonClicked(linkage, varName, value):
+    if linkage == modLinkage:
+        print 'onButtonClicked', linkage, varName, value
+
+def onModSettingsChanged(linkage, newSettings):
+    if linkage == modLinkage:
+        print 'onModSettingsChanged', newSettings
+
+try:
+    from gui.modsSettingsApi import g_modsSettingsApi
+    savedSettings = g_modsSettingsApi.getModSettings((modLinkage, ), template)
+    if savedSettings:
+        settings = savedSettings
+        g_modsSettingsApi.registerCallback((modLinkage, ), onModSettingsChanged, onButtonClicked)
+    else:
+        settings = g_modsSettingsApi.setModTemplate((modLinkage, ), template, onModSettingsChanged, onButtonClicked)
+except:
+    pass
+
 
 
 class _Config(object):
