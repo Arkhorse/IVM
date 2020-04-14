@@ -13,6 +13,7 @@ from gui.Scaleform.daapi.view.battle.shared.destroy_timers_panel import DestroyT
 from SoundGroups import g_instance as SoundGroups_g_instance
 from gui import SystemMessages
 from Account import PlayerAccount
+from PYmodsCore import PYmodsConfigInterface
 
 __name__ = 'IVM '
 __author__ = 'The Illusion '
@@ -26,115 +27,51 @@ _FILE_ = './mods/configs/IVM/IVM.json'
 
 print '[IVM] ' + str(__name__) + 'By ' + str(__maintainer__) + ' Version ' + str(__status__), str(__version__)
 
-modLinkage = 'mod_ivm'
-template = {
-    'modDisplayName': 'Improved Visuals and Sounds',
-    'settingsVersion': 0.2,
-    'enabled': True,
-    'column1': [
-        {
-            'type': 'Label',
-            'text': 'In Battle Options'
-        },
-        {
-            'type': 'CheckBox',
-            'text': 'Missions Hint UI',
-            'value': False,
-            'tooltip': '{BODY} Turn this off if you dont want the missions hint UI at the start of the battle {/ BODY}',
-            'varName': 'questHintEnabled'
-        },
-        {
-            'type': 'Label',
-            'text': 'Sound Options'
-        },
-        {
-            'type': 'CheckBox',
-            'text': 'Stun Sound',
-            'value': False,
-            'tooltip': '{HEADER} Turn this on if you want a Voice Over for when you are stunned. {/ HEADER} {BODY} This is the DeadPool one {/ BODY}',
-            'varName': 'soundStun1'
-        },
-        {
-            'type': 'CheckBox',
-            'text': 'Fire Sound',
-            'value': False,
-            'tooltip': '{HEADER} Turn this on if you want a Voice Over for when you are set on fire. {/ HEADER} {BODY} This is the DeadPool one. {/ BODY}',
-            'varName': 'soundFire1'
-        }, 
-    ],
-    'column2': [
-        {
-            'type': 'Label',
-            'text': 'In Garage Options'
-        },
-        {
-            'type': 'CheckBox',
-            'text': 'Enable Carousel Function',
-            'value': False,
-            'tooltip': '{BODY} Turn this on if you want to use the carousel stuff{/ BODY}',
-            'varName': 'carEnabled'
-        },
-        {
-            'type': 'Slider',
-            'text': 'The number of carousel rows you want',
-            'minimum': 1,
-            'maximum': 12,
-            'snapInterval': 1,
-            'value': 1,
-            'format': '{{{1}}}',
-            'varName': 'carRows'
+class ConfigInterface(PYmodsConfigInterface):
+    
+    def init(self):
+        self.ID = 'IVM'
+        self.version = '0.2 (13/04/2020)'
+        self.author += ' (The Illusion)'
+        self.data = {
+            'enabled': True,
+            'carEnabled': False,
+            'carRows': 1,
+            'questHintEnabled': True,
+            'soundStun1': False,
+            'soundFire1': False
         }
-    ]
-}
+        self.i18n = {
+            'name': 'Improved Visuals and Sounds',
+            'UI_setting_carEnabled_text': 'Enable Carousel Module, you will need to reload to see the effect.',
+            'UI_setting_carRows_text': 'Number of rows you want',
+            'UI_setting_questHintEnabled_text': 'Turn this off if you dont want the mission hint at the start of battle',
+            'UI_setting_soundStun1_text': 'Enable for a Voice Over when you are stunned',
+            'UI_setting_soundFire1_text': 'Enable for a Voice Over when you are on fire'
+        }
+        super(ConfigInterface, self).init()
 
-settings = {
-    'questHintEnabled': False,
-    'soundStun1': False,
-    'soundFire1': False,
-    'carEnabled': False,
-    'carRows': 1
-}
+    def createTemplate(self):
+        return {'modDisplayName': self.i18n['name'],
+         'enabled': self.data['enabled'],
+         'column1': [self.tb.createControl('questHintEnabled'), self.tb.createControl('soundStun1'), self.tb.createControl('soundFire1')],
+         'column2': [self.tb.createControl('carEnabled'), self.tb.createStepper('carRows', 1.0, 12.0, 1.0, True)]}
 
-questHintEnabled = settings['questHintEnabled']
-soundStun1 = settings['soundStun1']
-soundFire1 = settings['soundFire1']
-carEnabled = settings['carEnabled']
-carRows = settings['carRows']
-
-def onButtonClicked(linkage, varName, value):
-    if linkage == modLinkage:
-        print 'onButtonClicked', linkage, varName, value
-
-def onModSettingsChanged(linkage, newSettings):
-    if linkage == modLinkage:
-        print 'onModSettingsChanged', newSettings
-
-try:
-    from gui.modsSettingsApi import g_modsSettingsApi
-    savedSettings = g_modsSettingsApi.getModSettings((modLinkage, ), template)
-    if savedSettings:
-        settings = savedSettings
-        g_modsSettingsApi.registerCallback((modLinkage, ), onModSettingsChanged, onButtonClicked)
-    else:
-        settings = g_modsSettingsApi.setModTemplate((modLinkage, ), template, onModSettingsChanged, onButtonClicked)
-except:
-    pass
-
-
+config = ConfigInterface()
 """
 IVM Carousel Handler
 """
 
-if carEnabled == True: #and _config.carouselsSize == False:
+if config.data['carEnabled'] == True: #and _config.carouselsSize == False:
     old_as_rowsCountS = TankCarouselMeta.as_rowCountS
 
     def new_as_rowCountS(self, value):
         old_as_rowsCountS(self, value)
         if self._isDAAPIInited():
-            return self.flashObject.as_rowCount(carRows)
+            return self.flashObject.as_rowCount(config.data['carRows'])
 
     TankCarouselMeta.as_rowCountS = new_as_rowCountS
-    print '[IVM] Tank Carousels Loaded with ' + str(carRows) + ' rows'
+    print '[IVM] Tank Carousels Loaded with ' + str(config.data['carRows']) + ' rows'
 else:
     print '[IVM] Tank Carousels Not Enabled'
     pass
@@ -143,7 +80,7 @@ else:
 IVM Battle Hints Handler
 """
 #Mission Hint Panel
-if questHintEnabled == False:
+if config.data['questHintEnabled'] == False:
     old_quest_Hint = PreBattleHintPlugin._PreBattleHintPlugin__canDisplayQuestHint
     def ivm_questHint(self):
         old_quest_Hint(self)
@@ -158,7 +95,7 @@ else:
 IVM Stun Sound Handler
 """
 
-if soundStun1 == True:
+if config.data['soundStun1'] == True:
     #assign old event
     old_DestroyTimersPanel__showStunTimer = DestroyTimersPanel._DestroyTimersPanel__showStunTimer
     #define new event
@@ -184,7 +121,7 @@ else:
 """
 IVM fire sound handler
 """
-if soundFire1 == True:
+if config.data['soundFire1'] == True:
     #assign old event
     old_DestroyTimersPanel__setFireInVehicle = DestroyTimersPanel._DestroyTimersPanel__setFireInVehicle
 
