@@ -2,7 +2,6 @@
 from json import dump as jsonDump, dumps as jsonDumps, load as jsonLoad
 import os
 from os import path
-import Keys
 
 #Game Imports
 from debug_utils import LOG_CURRENT_EXCEPTION
@@ -32,17 +31,17 @@ template = {
     'modDisplayName': 'Improved Visuals and Sounds',
     'settingsVersion': 0.2,
     'enabled': True,
-    'column1:': [
+    'column1': [
         {
             'type': 'Label',
-            'text': 'In Battle Options',
+            'text': 'In Battle Options'
         },
         {
             'type': 'CheckBox',
             'text': 'Missions Hint UI',
             'value': False,
             'tooltip': '{BODY} Turn this off if you dont want the missions hint UI at the start of the battle {/ BODY}',
-            'varName': 'questHint'
+            'varName': 'questHintEnabled'
         },
         {
             'type': 'Label',
@@ -53,14 +52,14 @@ template = {
             'text': 'Stun Sound',
             'value': False,
             'tooltip': '{HEADER} Turn this on if you want a Voice Over for when you are stunned. {/ HEADER} {BODY} This is the DeadPool one {/ BODY}',
-            'varName': 'stunSoundEnabled'
+            'varName': 'soundStun1'
         },
         {
             'type': 'CheckBox',
             'text': 'Fire Sound',
             'value': False,
             'tooltip': '{HEADER} Turn this on if you want a Voice Over for when you are set on fire. {/ HEADER} {BODY} This is the DeadPool one. {/ BODY}',
-            'varName': 'fireSoundEnabled'
+            'varName': 'soundFire1'
         }, 
     ],
     'column2': [
@@ -69,33 +68,39 @@ template = {
             'text': 'In Garage Options'
         },
         {
+            'type': 'CheckBox',
+            'text': 'Enable Carousel Function',
+            'value': False,
+            'tooltip': '{BODY} Turn this on if you want to use the carousel stuff{/ BODY}',
+            'varName': 'carEnabled'
+        },
+        {
             'type': 'Slider',
             'text': 'The number of carousel rows you want',
             'minimum': 1,
             'maximum': 12,
-            'value': 2,
+            'snapInterval': 1,
+            'value': 1,
             'format': '{{{1}}}',
-            'varName': 'Rows'
+            'varName': 'carRows'
         }
     ]
 }
 
 settings = {
-            'Credits': False,
-            'debug': False,
-            'Battle': {
-                'questHint': True,
-            },
-            'Sounds': {
-                'stunSoundEnabled': False, 
-                'fireSoundEnabled': False, 
-            },
-            'Carousels': {
-                'Enabled': False,
-#                'Large': True,
-                'Rows': 3, 
-            }
-        }
+    'questHintEnabled': False,
+    'soundStun1': False,
+    'soundFire1': False,
+    'carEnabled': False,
+    'carRows': 1
+}
+
+questHintEnabled = settings['questHintEnabled']
+soundStun1 = settings['soundStun1']
+soundFire1 = settings['soundFire1']
+carEnabled = settings['carEnabled']
+carRows = settings['carRows']
+
 def onButtonClicked(linkage, varName, value):
     if linkage == modLinkage:
         print 'onButtonClicked', linkage, varName, value
@@ -115,13 +120,6 @@ try:
 except:
     pass
 
-creditsEnabled = settings['Credits']
-debugEnabled = settings['debug']
-questHintEnabled = settings['Battle']['questHint']
-soundStun1 = settings['Sounds']['stunSoundEnabled']
-soundFire1 = settings['Sounds']['fireSoundEnabled']
-carEnabled = settings['Carousels']['Enabled']
-carRows = settings['Carousels']['Rows']
 
 """
 IVM Carousel Handler
