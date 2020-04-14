@@ -83,7 +83,6 @@ template = {
 settings = {
             'Credits': False,
             'debug': False,
-            'Replays': True,
             'Battle': {
                 'questHint': True,
             },
@@ -116,98 +115,13 @@ try:
 except:
     pass
 
-
-
-class _Config(object):
-
-    def __init__(self):
-        self.carouselsEnabled = True
-        self.carouselsSize = 'Large'
-        self.tankrows = 3
-        self.questhintPanelEnabled = True
-        self.fireEnabled = True
-        self.stunEnabled = True
-        self.replayEnabled = True
-        self.debug = True
-        self.credits = True
-        self.Cdebug = False
-        self.confdata = {
-            'Credits': False,
-            'debug': False,
-            'Replays': True,
-            'Battle': {
-                'questHint': True,
-            },
-            'Sounds': {
-                'stunSoundEnabled': False, 
-                'fireSoundEnabled': False, 
-            },
-            'Carousels': {
-                'Enabled': False,
-#                'Large': True,
-                'Rows': 3, 
-            }
-        }
-        self.cdata = jsonDumps(self.confdata, indent=4, sort_keys=False)
-
-_config = _Config()
-
-def _makeconfig():
-    data = {}
-    if _config.confdata:
-        if _config.Cdebug:
-            print '[IVM] _config.confdata found'
-        try:
-            os.makedirs(_DIR_)
-        except:
-            LOG_CURRENT_EXCEPTION()
-            print '[ERROR][IVM] ' + str(_DIR_) + ' Failed to create, or already created'
-            pass
-        with open(_FILE_, 'w') as json_file:
-            jsonDump(_config.confdata, json_file, separators=(',', ': '), indent=4, sort_keys=False)
-            json_file.write('\n')
-            if _config.debug:
-                print '[IVM] New Config file created from default settings!'
-                print '[IVM] IVM config file can be found at {default wot folder}' + str(_FILE_)
-    else:
-        if _config.Cdebug:
-            print '[IVM] _config.confdata not found'
-        if _config.debug:
-            print '[IVM] Python file corrupted REDOWNLOAD MOD!!!!!'
-
-def _chkfile():
-    if path.exists(_FILE_):
-        if _config.Cdebug:
-            print '[IVM] config file found'
-        with open(_FILE_) as f:
-            data = jsonLoad(f)
-            _config.carouselsEnabled = data['Carousels']['Enabled']
-#            _config.carouselsSize = data['Carousels']['Large']
-            _config.tankrows = data['Carousels']['Rows']
-            _config.stunEnabled = data['Sounds']['stunSoundEnabled']
-            _config.fireEnabled = data['Sounds']['fireSoundEnabled']
-            _config.replayEnabled = data['Replays']
-            _config.credits = data['Credits']
-            _config.questhintPanelEnabled = data['Battle']['questHint']
-            if data['debug']:
-                _config.debug = True
-            else:
-                _config.debug = False
-    else:
-        if _config.debug:
-            print '[IVM] config file not found creating one...'
-        _makeconfig()
-
-_chkfile()
-if _config.replayEnabled == True:
-    import BattleReplay
-    print '[IVM] Battle Replays Enabled'
+_config = settings
 
 """
 IVM Carousel Handler
 """
 
-if _config.carouselsEnabled == True: #and _config.carouselsSize == False:
+if _config.Carousels.Enabled == True: #and _config.carouselsSize == False:
     old_as_rowsCountS = TankCarouselMeta.as_rowCountS
 
     def new_as_rowCountS(self, value):
@@ -225,7 +139,7 @@ else:
 IVM Battle Hints Handler
 """
 #Mission Hint Panel
-if _config.questhintPanelEnabled == False:
+if _config.Battle.questhint == False:
     old_quest_Hint = PreBattleHintPlugin._PreBattleHintPlugin__canDisplayQuestHint
     def ivm_questHint(self):
         old_quest_Hint(self)
