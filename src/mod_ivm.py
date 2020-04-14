@@ -75,7 +75,7 @@ template = {
             'maximum': 12,
             'value': 2,
             'format': '{{{1}}}',
-            'varName': 'tankrows'
+            'varName': 'Rows'
         }
     ]
 }
@@ -115,22 +115,28 @@ try:
 except:
     pass
 
-_config = settings
+creditsEnabled = settings['Credits']
+debugEnabled = settings['debug']
+questHintEnabled = settings['Battle']['questHint']
+soundStun1 = settings['Sounds']['stunSoundEnabled']
+soundFire1 = settings['Sounds']['fireSoundEnabled']
+carEnabled = settings['Carousels']['Enabled']
+carRows = settings['Carousels']['Rows']
 
 """
 IVM Carousel Handler
 """
 
-if _config.Carousels.Enabled == True: #and _config.carouselsSize == False:
+if carEnabled == True: #and _config.carouselsSize == False:
     old_as_rowsCountS = TankCarouselMeta.as_rowCountS
 
     def new_as_rowCountS(self, value):
         old_as_rowsCountS(self, value)
         if self._isDAAPIInited():
-            return self.flashObject.as_rowCount(_config.tankrows)
+            return self.flashObject.as_rowCount(carRows)
 
     TankCarouselMeta.as_rowCountS = new_as_rowCountS
-    print '[IVM] Tank Carousels Loaded with ' + str(_config.tankrows) + ' rows'
+    print '[IVM] Tank Carousels Loaded with ' + str(carRows) + ' rows'
 else:
     print '[IVM] Tank Carousels Not Enabled'
     pass
@@ -139,7 +145,7 @@ else:
 IVM Battle Hints Handler
 """
 #Mission Hint Panel
-if _config.Battle.questhint == False:
+if questHintEnabled == False:
     old_quest_Hint = PreBattleHintPlugin._PreBattleHintPlugin__canDisplayQuestHint
     def ivm_questHint(self):
         old_quest_Hint(self)
@@ -154,7 +160,7 @@ else:
 IVM Stun Sound Handler
 """
 
-if _config.stunEnabled == True:
+if soundStun1 == True:
     #assign old event
     old_DestroyTimersPanel__showStunTimer = DestroyTimersPanel._DestroyTimersPanel__showStunTimer
     #define new event
@@ -180,7 +186,7 @@ else:
 """
 IVM fire sound handler
 """
-if _config.fireEnabled == True:
+if soundFire1 == True:
     #assign old event
     old_DestroyTimersPanel__setFireInVehicle = DestroyTimersPanel._DestroyTimersPanel__setFireInVehicle
 
@@ -205,8 +211,8 @@ else:
     print '[IVM] Fire Sound Not Loaded'
     pass
 
-_LOAD_ = '[IVM][LOAD] IVM loaded with: ' + 'Carousels Enabled:', str(_config.carouselsEnabled), 'Rows:', str(_config.tankrows), 'Fire Sound Enabled:', str(_config.fireEnabled), 'Stun Sound Enabled:', str(_config.stunEnabled), 'Replays Enabled:', str(_config.replayEnabled)
-if _config.credits == True:
-    print _LOAD_, __credits__
-else:
-    print _LOAD_
+#_LOAD_ = '[IVM][LOAD] IVM loaded with: ' + 'Carousels Enabled:', str(_config.carouselsEnabled), 'Rows:', str(_config.tankrows), 'Fire Sound Enabled:', str(_config.fireEnabled), 'Stun Sound Enabled:', str(_config.stunEnabled), 'Replays Enabled:', str(_config.replayEnabled)
+#if _config.Credits == True:
+#    print _LOAD_, __credits__
+#else:
+#    print _LOAD_
