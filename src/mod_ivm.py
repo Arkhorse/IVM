@@ -45,8 +45,10 @@ class ConfigInterface(PYmodsConfigInterface):
         self.carEnabled = False
         self.carRows = 1
         self.questHintEnabled = True
-        self.soundStun1 = False
-        self.soundFire1 = False
+        self.stun = False
+        self.stunEvent = 'battle_event_stun'
+        self.fire = False
+        self.fireEvent = 'battle_event_fire'
         self.fixEffects = False
         self.fixVehicleTransparency = False
         super(ConfigInterface, self).__init__()
@@ -60,8 +62,10 @@ class ConfigInterface(PYmodsConfigInterface):
             'carEnabled': False,
             'carRows': 1,
             'questHintEnabled': True,
-            'soundStun1': False,
-            'soundFire1': False,
+            'stunEnabled': False,
+            'stunEvent': 'battle_event_stun',
+            'fireEnabled': False,
+            'fireEvent': 'battle_event_fire',
             'fixEffects': False,
             'fixVehicleTransparency': False
         }
@@ -70,8 +74,10 @@ class ConfigInterface(PYmodsConfigInterface):
             'UI_setting_carEnabled_text': 'Enable Carousel Module, you will need to reload to see the effect.',
             'UI_setting_carRows_text': 'Number of rows you want',
             'UI_setting_questHintEnabled_text': 'Turn this off if you dont want the mission hint at the start of battle',
-            'UI_setting_soundStun1_text': 'Enable for a Voice Over when you are stunned',
-            'UI_setting_soundFire1_text': 'Enable for a Voice Over when you are on fire',
+            'UI_setting_stunEnabled_text': 'Enable for a Voice Over when you are stunned',
+            'UI_setting_stunEnabled_tooltip': 'This can be altered in the config, requires WWISE',
+            'UI_setting_fireEnabled_text': 'Enable for a Voice Over when you are on fire',
+            'UI_setting_fireEnabled_tooltip': 'This can be altered in the config, requires WWISE',
             'UI_setting_fixEffects_text': 'Disable Effects List Spam',
             'UI_setting_fixEffects_tooltip': 'This is mostly for the python.log',
             'UI_setting_fixVehicleTransparency_text': 'Fix Vehicle Model Transparency',
@@ -88,8 +94,8 @@ class ConfigInterface(PYmodsConfigInterface):
         self.carEnabled = self.data['enabled'] and self.carEnabled
         self.carRows = self.data['carRows'] and self.carRows
         self.questHintEnabled = self.data['questHintEnabled'] and self.questHintEnabled
-        self.soundStun1 = self.data['soundStun1'] and self.soundStun1
-        self.soundFire1 = self.data['soundFire1'] and self.soundFire1
+        self.stun = self.data['stunEnabled'] and self.stun
+        self.fire = self.data['fireEnabled'] and self.fire
         self.fixEffects = self.data['fixEffects'] and self.fixEffects
         self.fixVehicleTransparency = self.data['fixVehicleTransparency'] and self.fixVehicleTransparency
 
@@ -99,7 +105,7 @@ class ConfigInterface(PYmodsConfigInterface):
     def createTemplate(self):
         return {'modDisplayName': self.i18n['name'],
          'enabled': self.data['enabled'],
-         'column1': [self.tb.createLabel('UI_changes') ,self.tb.createControl('questHintEnabled'), self.tb.createLabel('Sounds'), self.tb.createControl('soundStun1'), self.tb.createControl('soundFire1'), self.tb.createLabel('Fixes'), self.tb.createControl('fixEffects'), self.tb.createControl('fixVehicleTransparency')],
+         'column1': [self.tb.createLabel('UI_changes') ,self.tb.createControl('questHintEnabled'), self.tb.createLabel('Sounds'), self.tb.createControl('stunEnabled'), self.tb.createControl('fireEnabled'), self.tb.createLabel('Fixes'), self.tb.createControl('fixEffects'), self.tb.createControl('fixVehicleTransparency')],
          'column2': [self.tb.createLabel('Carousel_Options') ,self.tb.createControl('carEnabled'), self.tb.createStepper('carRows', 1.0, 12.0, 1.0, True)]}
 
     def readCurrentSettings(self, quiet=True):
@@ -147,7 +153,7 @@ else:
 IVM Stun Sound Handler
 """
 
-if config.data['soundStun1'] == True:
+if config.data['stunEnabled'] == True:
     #assign old event
     old_DestroyTimersPanel__showStunTimer = DestroyTimersPanel._DestroyTimersPanel__showStunTimer
     #define new event
@@ -157,7 +163,7 @@ if config.data['soundStun1'] == True:
         try:
             if value.duration > 0.0:
                 #play sound at event 'battle_event_stun'
-                SoundGroups_g_instance.playSound2D('battle_event_stun')
+                SoundGroups_g_instance.playSound2D(config.data['stunEvent'])
         except:
             #if that doesnt work, log the error
             print '[ERROR][IVM] Stun Sound Not Played'
@@ -173,7 +179,7 @@ else:
 """
 IVM fire sound handler
 """
-if config.data['soundFire1'] == True:
+if config.data['fireEnabled'] == True:
     #assign old event
     old_DestroyTimersPanel__setFireInVehicle = DestroyTimersPanel._DestroyTimersPanel__setFireInVehicle
 
@@ -182,7 +188,7 @@ if config.data['soundFire1'] == True:
         try:
             if isInFire:
                 #play sound at event 'battle_event_fire'
-                SoundGroups_g_instance.playSound2D('battle_event_fire')
+                SoundGroups_g_instance.playSound2D(config.data['fireEvent'])
             else:
                 self._hideTimer(_TIMER_STATES.FIRE)
             return
