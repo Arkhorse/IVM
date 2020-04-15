@@ -50,13 +50,17 @@ class ConfigInterface(PYmodsConfigInterface):
         self.fire = False
         self.fireEvent = 'battle_event_fire'
         self.fixEffects = False
+        self.emptyShellsEnabled = False
+        self.emptyShellsEvent = 'IVM_emptyShellsEvent'
+        self.almostOutEvent = 'IVM_almostOutEvent'
+        self.TESTER = True
         self.fixVehicleTransparency = False
         super(ConfigInterface, self).__init__()
 
     def init(self):
         self.ID = 'IVM'
         self.version = '0.2 (13/04/2020)'
-        self.author += ' (The Illusion)'
+        self.author = '(The Illusion)'
         self.data = {
             'enabled': True,
             'carEnabled': False,
@@ -67,7 +71,11 @@ class ConfigInterface(PYmodsConfigInterface):
             'fireEnabled': False,
             'fireEvent': 'battle_event_fire',
             'fixEffects': False,
-            'fixVehicleTransparency': False
+            'fixVehicleTransparency': False,
+            'emptyShellsEnabled': False,
+            'emptyShellsEvent': 'IVM_emptyShellsEvent',
+            'almostOutEvent': 'IVM_almostOutEvent',
+            'TESTER': True
         }
         self.i18n = {
             'name': 'Improved Visuals and Sounds',
@@ -82,6 +90,10 @@ class ConfigInterface(PYmodsConfigInterface):
             'UI_setting_fixEffects_tooltip': 'This is mostly for the python.log',
             'UI_setting_fixVehicleTransparency_text': 'Fix Vehicle Model Transparency',
             'UI_setting_NDA_text': ' \xe2\x80\xa2 No data available or provided.',
+            'UI_setting_emptyShellsEnabled_text': 'Enable No Shell Sound and 5 shell warning',
+            'UI_setting_emptyShellsEnabled_tooltip': 'This can be altered in the config, requires WWISE',
+            'UI_setting_TESTER_text': 'Tester',
+            'UI_setting_TESTER_tooltip': 'Enable this if you want to test new features',
             'UI_setting_UI_changes_text': 'UI Changes',
             'UI_setting_Sounds_text': 'Sounds',
             'UI_setting_Fixes_text': 'Fixes',
@@ -96,8 +108,11 @@ class ConfigInterface(PYmodsConfigInterface):
         self.questHintEnabled = self.data['questHintEnabled'] and self.questHintEnabled
         self.stun = self.data['stunEnabled'] and self.stun
         self.fire = self.data['fireEnabled'] and self.fire
+        self.emptyShellsEnabled = self.data['emptyShellsEnabled'] and self.emptyShellsEnabled
+        self.almostOutEvent = self.data['almostOutEvent'] and self.almostOutEvent
         self.fixEffects = self.data['fixEffects'] and self.fixEffects
         self.fixVehicleTransparency = self.data['fixVehicleTransparency'] and self.fixVehicleTransparency
+        self.TESTER = self.data['TESTER'] and self.TESTER
 
     def loadLang(self):
         pass
@@ -116,7 +131,7 @@ class ConfigInterface(PYmodsConfigInterface):
         """
         return {'modDisplayName': self.i18n['name'],
          'enabled': self.data['enabled'],
-         'column1': [self.tb.createLabel('UI_changes') ,self.tb.createControl('questHintEnabled'), self.tb.createLabel('Sounds'), self.tb.createControl('stunEnabled'), self.tb.createControl('fireEnabled'), self.tb.createLabel('Fixes'), self.tb.createControl('fixEffects'), self.tb.createControl('fixVehicleTransparency')],
+         'column1': [self.tb.createControl('TESTER') ,self.tb.createLabel('UI_changes') ,self.tb.createControl('questHintEnabled'), self.tb.createLabel('Sounds'), self.tb.createControl('stunEnabled'), self.tb.createControl('fireEnabled'), self.tb.createControl('emptyShellsEnabled') ,self.tb.createLabel('Fixes'), self.tb.createControl('fixEffects'), self.tb.createControl('fixVehicleTransparency')],
          'column2': [self.tb.createLabel('Carousel_Options') ,self.tb.createControl('carEnabled'), self.tb.createStepper('carRows', 1.0, 12.0, 1.0, True)]}
 
     def readCurrentSettings(self, quiet=True):
@@ -138,8 +153,12 @@ if config.data['carEnabled'] == True:
         old_as_rowsCountS(self, value)
         if self._isDAAPIInited():
             return self.flashObject.as_rowCount(tankrows)
-
+    
     TankCarouselMeta.as_rowCountS = new_as_rowCountS
+    from gui.Scaleform.daapi.view.common.vehicle_common import carousel_environment
+    def updateVehicles(self, diff):
+        self._carouselDP.updateVehicles()
+
     print '[IVM] Tank Carousels Loaded with ' + str(config.data['carRows']) + ' rows'
 else:
     print '[IVM] Tank Carousels Not Enabled'
@@ -215,6 +234,24 @@ else:
     print '[IVM] Fire Sound Not Loaded'
     pass
 
+"""
+IVM Empty Shells
+"""
+if config.data['emptyShellsEnabled'] == True and config.TESTER == True:
+    from gui.battle_control.battle_constants import CANT_SHOOT_ERROR
+    def ivmEmptyShells(self):
+        if CANT_SHOOT_ERROR:
+            count = 0
+            SoundGroups_g_instance.playSound2D(config.data['emptyShellsEvent'])
+            count += 1
+            print '[IVM] Player is out of shells! #' + count
+
+    from gui.battle_control.controllers.consumables.ammo_ctrl import getShotIndex
+    print index
+    
+        #if (shellsInClip == 0 and not timeLeft == 0 and self.__gunSettings.hasAutoReload() or not shellsInClip >= 1 and timeLeft != 0):
+            #SoundGroups_g_instance.playSound2D(config.data['almostOutEvent'])
+            
 """
 IVM Fixes
 """
