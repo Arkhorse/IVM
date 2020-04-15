@@ -40,12 +40,14 @@ class ConfigInterface(PYmodsConfigInterface):
         self.configsList = []
         self.confMeta = {}
         self.sectDict = {}
+        self.settings = {}
         self.enabled = True
         self.carEnabled = False
         self.carRows = 1
         self.questHintEnabled = True
         self.soundStun1 = False
         self.soundFire1 = False
+        self.fixEffects = False
         super(ConfigInterface, self).__init__()
 
     def init(self):
@@ -58,7 +60,8 @@ class ConfigInterface(PYmodsConfigInterface):
             'carRows': 1,
             'questHintEnabled': True,
             'soundStun1': False,
-            'soundFire1': False
+            'soundFire1': False,
+            'fixEffects': False
         }
         self.i18n = {
             'name': 'Improved Visuals and Sounds',
@@ -67,6 +70,7 @@ class ConfigInterface(PYmodsConfigInterface):
             'UI_setting_questHintEnabled_text': 'Turn this off if you dont want the mission hint at the start of battle',
             'UI_setting_soundStun1_text': 'Enable for a Voice Over when you are stunned',
             'UI_setting_soundFire1_text': 'Enable for a Voice Over when you are on fire',
+            'UI_setting_fixEffects_text': 'Enable this if you are tired of waiting for WG to fix this spam...',
             'UI_setting_NDA': ' \xe2\x80\xa2 No data available or provided.'
         }
         super(ConfigInterface, self).init()
@@ -78,6 +82,7 @@ class ConfigInterface(PYmodsConfigInterface):
         self.questHintEnabled = self.data['questHintEnabled'] and self.questHintEnabled
         self.soundStun1 = self.data['soundStun1'] and self.soundStun1
         self.soundFire1 = self.data['soundFire1'] and self.soundFire1
+        self.fixEffects = self.data['fixEffects'] and self.fixEffects
 
     def loadLang(self):
         pass
@@ -85,8 +90,14 @@ class ConfigInterface(PYmodsConfigInterface):
     def createTemplate(self):
         return {'modDisplayName': self.i18n['name'],
          'enabled': self.data['enabled'],
-         'column1': [self.tb.createControl('questHintEnabled'), self.tb.createControl('soundStun1'), self.tb.createControl('soundFire1')],
+         'column1': [self.tb.createControl('questHintEnabled'), self.tb.createControl('soundStun1'), self.tb.createControl('soundFire1'), self.tb.createControl('fixEffects')],
          'column2': [self.tb.createControl('carEnabled'), self.tb.createStepper('carRows', 1.0, 12.0, 1.0, True)]}
+
+    def readCurrentSettings(self, quiet=True):
+        super(ConfigInterface, self).readCurrentSettings(quiet)
+        self.settings = loadJson(self.ID, 'settings', self.settings, self.configPath)
+        loadJson(self.ID, 'settings', self.settings, self.configPath, True, quiet=quiet)
+        self.updateMod()
 
 config = ConfigInterface()
 
@@ -178,8 +189,13 @@ else:
     print '[IVM] Fire Sound Not Loaded'
     pass
 
-#_LOAD_ = '[IVM][LOAD] IVM loaded with: ' + 'Carousels Enabled:', str(_config.carouselsEnabled), 'Rows:', str(_config.tankrows), 'Fire Sound Enabled:', str(_config.fireEnabled), 'Stun Sound Enabled:', str(_config.stunEnabled), 'Replays Enabled:', str(_config.replayEnabled)
-#if _config.Credits == True:
-#    print _LOAD_, __credits__
-#else:
-#    print _LOAD_
+"""
+IVM Fixes
+"""
+# Effects List Spam Fix
+if config.data['fixEffects'] == True:
+    from helpers import EffectsList
+    EffectsList.LOG_WARNING = lambda *_, **__: None
+    print 'Effects List Spam Fix by ' + str(__name__), str(__version__) + ' done.'
+else:
+    pass
