@@ -2,8 +2,12 @@
 from json import dump as jsonDump, dumps as jsonDumps, load as jsonLoad
 import os
 from os import path
+import glob
+import traceback
+import re
 
 #Game Imports
+import BigWorld
 from debug_utils import LOG_CURRENT_EXCEPTION
 from gui.Scaleform.daapi.view.meta.TankCarouselMeta import TankCarouselMeta
 #Hints Panel
@@ -13,7 +17,7 @@ from gui.Scaleform.daapi.view.battle.shared.destroy_timers_panel import DestroyT
 from SoundGroups import g_instance as SoundGroups_g_instance
 from gui import SystemMessages
 from Account import PlayerAccount
-from PYmodsCore import PYmodsConfigInterface
+from PYmodsCore import PYmodsConfigInterface, loadJson, remDups
 
 __name__ = 'IVM '
 __author__ = 'The Illusion '
@@ -28,7 +32,22 @@ _FILE_ = './mods/configs/IVM/IVM.json'
 print '[IVM] ' + str(__name__) + 'By ' + str(__maintainer__) + ' Version ' + str(__status__), str(__version__)
 
 class ConfigInterface(PYmodsConfigInterface):
-    
+
+    def __init__(self):
+        self.textStack = {}
+        self.wasReplaced = {}
+        self.textId = {}
+        self.configsList = []
+        self.confMeta = {}
+        self.sectDict = {}
+        self.enabled = True
+        self.carEnabled = False
+        self.carRows = 1
+        self.questHintEnabled = True
+        self.soundStun1 = False
+        self.soundFire1 = False
+        super(ConfigInterface, self).__init__()
+
     def init(self):
         self.ID = 'IVM'
         self.version = '0.2 (13/04/2020)'
@@ -47,9 +66,21 @@ class ConfigInterface(PYmodsConfigInterface):
             'UI_setting_carRows_text': 'Number of rows you want',
             'UI_setting_questHintEnabled_text': 'Turn this off if you dont want the mission hint at the start of battle',
             'UI_setting_soundStun1_text': 'Enable for a Voice Over when you are stunned',
-            'UI_setting_soundFire1_text': 'Enable for a Voice Over when you are on fire'
+            'UI_setting_soundFire1_text': 'Enable for a Voice Over when you are on fire',
+            'UI_setting_NDA': ' \xe2\x80\xa2 No data available or provided.'
         }
         super(ConfigInterface, self).init()
+    
+    def onApplySettings(self, settings):
+        super(ConfigInterface, self).onApplySettings(settings)
+        self.carEnabled = self.data['enabled'] and self.carEnabled
+        self.carRows = self.data['carRows'] and self.carRows
+        self.questHintEnabled = self.data['questHintEnabled'] and self.questHintEnabled
+        self.soundStun1 = self.data['soundStun1'] and self.soundStun1
+        self.soundFire1 = self.data['soundFire1'] and self.soundFire1
+
+    def loadLang(self):
+        pass
 
     def createTemplate(self):
         return {'modDisplayName': self.i18n['name'],
@@ -58,6 +89,7 @@ class ConfigInterface(PYmodsConfigInterface):
          'column2': [self.tb.createControl('carEnabled'), self.tb.createStepper('carRows', 1.0, 12.0, 1.0, True)]}
 
 config = ConfigInterface()
+
 """
 IVM Carousel Handler
 """
