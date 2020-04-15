@@ -103,6 +103,17 @@ class ConfigInterface(PYmodsConfigInterface):
         pass
 
     def createTemplate(self):
+        """
+        createTooltip
+        createLabel
+        createControl
+        createOptions
+        createHotKey
+        _createNumeric
+        createStepper
+        createSlider
+        createRangeSlider
+        """
         return {'modDisplayName': self.i18n['name'],
          'enabled': self.data['enabled'],
          'column1': [self.tb.createLabel('UI_changes') ,self.tb.createControl('questHintEnabled'), self.tb.createLabel('Sounds'), self.tb.createControl('stunEnabled'), self.tb.createControl('fireEnabled'), self.tb.createLabel('Fixes'), self.tb.createControl('fixEffects'), self.tb.createControl('fixVehicleTransparency')],
