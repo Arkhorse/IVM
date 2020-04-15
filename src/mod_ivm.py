@@ -48,6 +48,7 @@ class ConfigInterface(PYmodsConfigInterface):
         self.soundStun1 = False
         self.soundFire1 = False
         self.fixEffects = False
+        self.fixVehicleTransparency = False
         super(ConfigInterface, self).__init__()
 
     def init(self):
@@ -61,7 +62,8 @@ class ConfigInterface(PYmodsConfigInterface):
             'questHintEnabled': True,
             'soundStun1': False,
             'soundFire1': False,
-            'fixEffects': False
+            'fixEffects': False,
+            'fixVehicleTransparency': False
         }
         self.i18n = {
             'name': 'Improved Visuals and Sounds',
@@ -70,8 +72,14 @@ class ConfigInterface(PYmodsConfigInterface):
             'UI_setting_questHintEnabled_text': 'Turn this off if you dont want the mission hint at the start of battle',
             'UI_setting_soundStun1_text': 'Enable for a Voice Over when you are stunned',
             'UI_setting_soundFire1_text': 'Enable for a Voice Over when you are on fire',
-            'UI_setting_fixEffects_text': 'Enable this if you are tired of waiting for WG to fix this spam...',
-            'UI_setting_NDA': ' \xe2\x80\xa2 No data available or provided.'
+            'UI_setting_fixEffects_text': 'Disable Effects List Spam',
+            'UI_setting_fixEffects_tooltip': 'This is mostly for the python.log',
+            'UI_setting_fixVehicleTransparency_text': 'Fix Vehicle Model Transparency',
+            'UI_setting_NDA_text': ' \xe2\x80\xa2 No data available or provided.',
+            'UI_setting_UI_changes_text': 'UI Changes',
+            'UI_setting_Sounds_text': 'Sounds',
+            'UI_setting_Fixes_text': 'Fixes',
+            'UI_setting_Carousel_Options_text': 'Carousel Options'
         }
         super(ConfigInterface, self).init()
     
@@ -83,6 +91,7 @@ class ConfigInterface(PYmodsConfigInterface):
         self.soundStun1 = self.data['soundStun1'] and self.soundStun1
         self.soundFire1 = self.data['soundFire1'] and self.soundFire1
         self.fixEffects = self.data['fixEffects'] and self.fixEffects
+        self.fixVehicleTransparency = self.data['fixVehicleTransparency'] and self.fixVehicleTransparency
 
     def loadLang(self):
         pass
@@ -90,8 +99,8 @@ class ConfigInterface(PYmodsConfigInterface):
     def createTemplate(self):
         return {'modDisplayName': self.i18n['name'],
          'enabled': self.data['enabled'],
-         'column1': [self.tb.createControl('questHintEnabled'), self.tb.createControl('soundStun1'), self.tb.createControl('soundFire1'), self.tb.createControl('fixEffects')],
-         'column2': [self.tb.createControl('carEnabled'), self.tb.createStepper('carRows', 1.0, 12.0, 1.0, True)]}
+         'column1': [self.tb.createLabel('UI_changes') ,self.tb.createControl('questHintEnabled'), self.tb.createLabel('Sounds'), self.tb.createControl('soundStun1'), self.tb.createControl('soundFire1'), self.tb.createLabel('Fixes'), self.tb.createControl('fixEffects'), self.tb.createControl('fixVehicleTransparency')],
+         'column2': [self.tb.createLabel('Carousel_Options') ,self.tb.createControl('carEnabled'), self.tb.createStepper('carRows', 1.0, 12.0, 1.0, True)]}
 
     def readCurrentSettings(self, quiet=True):
         super(ConfigInterface, self).readCurrentSettings(quiet)
@@ -197,5 +206,18 @@ if config.data['fixEffects'] == True:
     from helpers import EffectsList
     EffectsList.LOG_WARNING = lambda *_, **__: None
     print 'Effects List Spam Fix by ' + str(__name__), str(__version__) + ' done.'
+else:
+    pass
+
+# Vehicle Model Transparency Fix
+if config.data['fixVehicleTransparency'] == True:
+    from vehicle_systems.components.highlighter import Highlighter
+    def IVM_doHighlight(self, status, args):
+        if self._Highlighter__isPlayersVehicle:
+            status &= ~self.HIGHLIGHT_SIMPLE & ~self.HIGHLIGHT_ON
+        old_doHighlight(self, status, args)
+    old_doHighlight = Highlighter._Highlighter__doHighlightOperation
+    Highlighter._Highlighter__doHighlightOperation = IVM_doHighlight
+    print 'Vehicle Model Transparency Fix by ' + str(__name__), str(__version__) + ' done.'
 else:
     pass
