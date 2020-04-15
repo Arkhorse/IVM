@@ -120,13 +120,13 @@ config = ConfigInterface()
 IVM Carousel Handler
 """
 
-if config.data['carEnabled'] == True: #and _config.carouselsSize == False:
+if config.data['carEnabled'] == True:
     old_as_rowsCountS = TankCarouselMeta.as_rowCountS
-
+    tankrows = config.data['carRows']
     def new_as_rowCountS(self, value):
         old_as_rowsCountS(self, value)
         if self._isDAAPIInited():
-            return self.flashObject.as_rowCount(config.data['carRows'])
+            return self.flashObject.as_rowCount(tankrows)
 
     TankCarouselMeta.as_rowCountS = new_as_rowCountS
     print '[IVM] Tank Carousels Loaded with ' + str(config.data['carRows']) + ' rows'
