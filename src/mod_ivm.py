@@ -246,9 +246,6 @@ if config.data['emptyShellsEnabled'] == True and config.TESTER == True:
             count += 1
             print '[IVM] Player is out of shells! #' + count
 
-    from gui.battle_control.controllers.consumables.ammo_ctrl import getShotIndex
-    print index
-    
         #if (shellsInClip == 0 and not timeLeft == 0 and self.__gunSettings.hasAutoReload() or not shellsInClip >= 1 and timeLeft != 0):
             #SoundGroups_g_instance.playSound2D(config.data['almostOutEvent'])
             
