@@ -89,7 +89,7 @@ class ConfigInterface(PYmodsConfigInterface):
             'UI_setting_fixEffects_text': 'Disable Effects List Spam',
             'UI_setting_fixEffects_tooltip': 'This is mostly for the python.log',
             'UI_setting_fixVehicleTransparency_text': 'Fix Vehicle Model Transparency',
-            'UI_setting_NDA_text': ' \xe2\x80\xa2 No data available or provided.',
+            'UI_setting_NDA_text': ' /xe2/x80/xa2 No data available or provided.',
             'UI_setting_emptyShellsEnabled_text': 'Enable No Shell Sound and 5 shell warning',
             'UI_setting_emptyShellsEnabled_tooltip': 'This can be altered in the config, requires WWISE',
             'UI_setting_TESTER_text': 'Tester',
