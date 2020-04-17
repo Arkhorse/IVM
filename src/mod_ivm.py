@@ -406,13 +406,9 @@ class IVM_Repair(object):
 
     def startBattle(self):
         self.ctrl = BigWorld.player().guiSessionProvider.shared
-        InputHandler.g_instance.onKeyDown += self.injectButton
-        InputHandler.g_instance.onKeyUp += self.injectButton
         self.checkBattleStarted()
 
     def stopBattle(self):
-        InputHandler.g_instance.onKeyDown -= self.injectButton
-        InputHandler.g_instance.onKeyUp -= self.injectButton
         for equipmentTag in self.items:
             self.items[equipmentTag][2] = None
             self.items[equipmentTag][3] = None
