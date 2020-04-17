@@ -306,17 +306,43 @@ else:
 IVM Empty Shells
 """
 if config.data['emptyShellsEnabled'] == True and config.TESTER == True:
-    from gui.battle_control.battle_constants import CANT_SHOOT_ERROR
-    def ivmEmptyShells(self):
-        if CANT_SHOOT_ERROR:
-            count = 0
-            SoundGroups_g_instance.playSound2D(config.data['emptyShellsEvent'])
-            count += 1
-            print '[IVM] Player is out of shells! #' + count
+    from helpers.CallbackDelayer import CallbackDelayer
+    class IVM_SoundEvent(CallbackDelayer):
+        def __init__(self, effectDesc):
+            CallbackDelayer.__init__(self)
+            self._desc = effectDesc
+            self.sound = None
+            return
 
-        #if (shellsInClip == 0 and not timeLeft == 0 and self.__gunSettings.hasAutoReload() or not shellsInClip >= 1 and timeLeft != 0):
-            #SoundGroups_g_instance.playSound2D(config.data['almostOutEvent'])
-            
+        def __del__(self):
+            if self._sound is not None:
+                self._sound.stop()
+                self._sound = None
+            CallbackDelayer.destroy(self)
+            return
+
+        def start(self, shellCount, lastShell, reloadStart, shellReloadTime):
+            if reloadStart:
+                if shellCount == 0:
+                    SoundGroups_g_instance.playSound2D(config.data['emptyShellEvent'])
+                    print '[IVM] Player out of ammo!'
+                elif shellCount == 5:
+                    SoundGroups_g_instance.playSound2D(config.data['almostOutEvent'])
+                    print '[IVM] Player is almost out of ammo!'
+                else:
+                    pass
+                time = shellReloadTime - self._desc.duration
+                self.delayCallback(time, shellCount, BigWorld.time() + time)
+                return
+
+        def stop(self):
+            if self._sound is not None:
+                self._sound.stop()
+                self._sound = None
+            return
+
+else:
+    pass            
 """
 IVM Fixes
 """
