@@ -8,6 +8,8 @@ import re
 
 #Game Imports
 import BigWorld
+import BattleReplay
+import Keys
 from debug_utils import LOG_CURRENT_EXCEPTION
 from gui.Scaleform.daapi.view.meta.TankCarouselMeta import TankCarouselMeta
 #Hints Panel
@@ -18,6 +20,12 @@ from SoundGroups import g_instance as SoundGroups_g_instance
 from gui import SystemMessages
 from Account import PlayerAccount
 from PYmodsCore import PYmodsConfigInterface, loadJson, remDups
+#Repair
+from gui import InputHandler
+from gui.battle_control.battle_constants import DEVICE_STATE_DESTROYED, VEHICLE_VIEW_STATE, DEVICE_STATE_NORMAL
+from gui.shared.gui_items import Vehicle
+from gui.Scaleform.genConsts.BATTLE_VIEW_ALIASES import BATTLE_VIEW_ALIASES
+from gui.shared import g_eventBus, events, EVENT_BUS_SCOPE
 
 __name__ = 'IVM '
 __author__ = 'The Illusion '
@@ -55,12 +63,17 @@ class ConfigInterface(PYmodsConfigInterface):
         self.almostOutEvent = 'IVM_almostOutEvent'
         self.TESTER = True
         self.fixVehicleTransparency = False
+        self.repairEnabled = False
         super(ConfigInterface, self).__init__()
 
     def init(self):
         self.ID = 'IVM'
         self.version = '0.2 (13/04/2020)'
         self.author = '(The Illusion)'
+        self.buttons = {
+            'buttonRepair' : [Keys.KEY_SPACE],
+            'buttonChassis': [[Keys.KEY_LALT, Keys.KEY_RALT]]
+        }
         self.data = {
             'enabled': True,
             'carEnabled': False,
@@ -75,7 +88,42 @@ class ConfigInterface(PYmodsConfigInterface):
             'emptyShellsEnabled': False,
             'emptyShellsEvent': 'IVM_emptyShellsEvent',
             'almostOutEvent': 'IVM_almostOutEvent',
-            'TESTER': True
+            'TESTER': True,
+            'repairEnabled': False,
+            'buttonChassis' : self.buttons['buttonChassis'],
+            'buttonRepair'  : self.buttons['buttonRepair'],
+            'removeStun'    : True,
+            'extinguishFire': True,
+            'healCrew': True,
+            'repairDevices': True,
+            'restoreChassis': False,
+            'useGoldKits'   : True,
+            'repairPriority': {
+                'lightTank'            : {
+                    'medkit'   : ['commander', 'driver', 'gunner', 'loader'],
+                    'repairkit': ['ammoBay', 'engine', 'gun', 'turretRotator', 'fuelTank']
+                },
+                'mediumTank'           : {
+                    'medkit'   : ['commander', 'loader', 'driver', 'gunner'],
+                    'repairkit': ['ammoBay', 'turretRotator', 'engine', 'gun', 'fuelTank']
+                },
+                'heavyTank'            : {
+                    'medkit'   : ['commander', 'loader', 'gunner', 'driver'],
+                    'repairkit': ['ammoBay', 'gun', 'turretRotator', 'engine', 'fuelTank']
+                },
+                'SPG'                  : {
+                    'medkit'   : ['commander', 'loader', 'gunner', 'driver'],
+                    'repairkit': ['ammoBay', 'gun', 'engine', 'turretRotator', 'fuelTank']
+                },
+                'AT-SPG'               : {
+                    'medkit'   : ['commander', 'loader', 'gunner', 'driver'],
+                    'repairkit': ['ammoBay', 'gun', 'engine', 'turretRotator', 'fuelTank']
+                },
+                'AllAvailableVariables': {
+                    'medkit'   : ['commander', 'gunner', 'driver', 'radioman', 'loader'],
+                    'repairkit': ['engine', 'ammoBay', 'gun', 'turretRotator', 'chassis', 'surveyingDevice', 'radio', 'fuelTank', 'wheel']
+                }
+            }
         }
         self.i18n = {
             'name': 'Improved Visuals and Sounds',
@@ -97,7 +145,25 @@ class ConfigInterface(PYmodsConfigInterface):
             'UI_setting_UI_changes_text': 'UI Changes',
             'UI_setting_Sounds_text': 'Sounds',
             'UI_setting_Fixes_text': 'Fixes',
-            'UI_setting_Carousel_Options_text': 'Carousel Options'
+            'UI_setting_Carousel_Options_text': 'Carousel Options',
+            'UI_setting_Repair_text': 'Repair Options',
+            'UI_setting_repairEnabled_text': 'Enable',
+            'UI_setting_buttonChassis_text'   : 'Button: Restore Tracks and Wheels',
+            'UI_setting_buttonChassis_tooltip': '',
+            'UI_setting_buttonRepair_text'    : 'Button: Smart Repair',
+            'UI_setting_buttonRepair_tooltip' : '',
+            'UI_setting_removeStun_text'      : 'Remove Stun',
+            'UI_setting_removeStun_tooltip'   : '',
+            'UI_setting_useGoldKits_text'     : 'Use Premium Kits',
+            'UI_setting_useGoldKits_tooltip'  : '',
+            'UI_setting_extinguishFire_text'   : 'Extinguish Fire',
+            'UI_setting_extinguishFire_tooltip': '',
+            'UI_setting_healCrew_text'   : 'Heal Cew',
+            'UI_setting_healCrew_tooltip': '',
+            'UI_setting_restoreChassis_text'   : 'Restore Tracks and Wheels',
+            'UI_setting_restoreChassis_tooltip': '',
+            'UI_setting_repairDevices_text'   : 'Repair Devices',
+            'UI_setting_repairDevices_tooltip': ''
         }
         super(ConfigInterface, self).init()
     
@@ -132,7 +198,7 @@ class ConfigInterface(PYmodsConfigInterface):
         return {'modDisplayName': self.i18n['name'],
          'enabled': self.data['enabled'],
          'column1': [self.tb.createControl('TESTER') ,self.tb.createLabel('UI_changes') ,self.tb.createControl('questHintEnabled'), self.tb.createLabel('Sounds'), self.tb.createControl('stunEnabled'), self.tb.createControl('fireEnabled'), self.tb.createControl('emptyShellsEnabled') ,self.tb.createLabel('Fixes'), self.tb.createControl('fixEffects'), self.tb.createControl('fixVehicleTransparency')],
-         'column2': [self.tb.createLabel('Carousel_Options') ,self.tb.createControl('carEnabled'), self.tb.createStepper('carRows', 1.0, 12.0, 1.0, True)]}
+         'column2': [self.tb.createLabel('Carousel_Options'), self.tb.createControl('carEnabled'), self.tb.createStepper('carRows', 1.0, 12.0, 1.0, True), self.tb.createLabel('Repair'), self.tb.createControl('repairEnabled'), self.tb.createHotKey('buttonChassis'),self.tb.createHotKey('buttonRepair'), self.tb.createControl('useGoldKits'), self.tb.createControl('removeStun'), self.tb.createControl('healCrew'), self.tb.createControl('repairDevices'), self.tb.createControl('restoreChassis'), self.tb.createControl('extinguishFire')]}
 
     def readCurrentSettings(self, quiet=True):
         super(ConfigInterface, self).readCurrentSettings(quiet)
@@ -155,9 +221,11 @@ if config.data['carEnabled'] == True:
             return self.flashObject.as_rowCount(tankrows)
     
     TankCarouselMeta.as_rowCountS = new_as_rowCountS
-    from gui.Scaleform.daapi.view.common.vehicle_common import carousel_environment
-    def updateVehicles(self, diff):
-        self._carouselDP.updateVehicles()
+    from gui.Scaleform.daapi.view.common.vehicle_carousel import carousel_environment
+    def updateVehicles(self, vehicles=None, filterCriteria=None):
+        self.new_as_rowCountS()
+        self._carouselDP.updateVehicles(vehicles, filterCriteria)
+        self.applyFilter()
 
     print '[IVM] Tank Carousels Loaded with ' + str(config.data['carRows']) + ' rows'
 else:
@@ -272,3 +340,174 @@ if config.data['fixVehicleTransparency'] == True:
     print 'Vehicle Model Transparency Fix by ' + str(__name__), str(__version__) + ' done.'
 else:
     pass
+
+"""
+IVM Repair
+"""
+
+COMPLEX_ITEM = {
+    'leftTrack' : 'chassis',
+    'rightTrack': 'chassis',
+    'gunner1'   : 'gunner',
+    'gunner2'   : 'gunner',
+    'radioman1' : 'radioman',
+    'radioman2' : 'radioman',
+    'loader1'   : 'loader',
+    'loader2'   : 'loader',
+    'wheel0': 'wheel',
+    'wheel1': 'wheel',
+    'wheel2': 'wheel',
+    'wheel3': 'wheel',
+    'wheel4': 'wheel',
+    'wheel5': 'wheel',
+    'wheel6': 'wheel',
+    'wheel7': 'wheel'
+}
+
+CHASSIS = ['chassis', 'leftTrack', 'rightTrack', 'wheel', 'wheel0', 'wheel1', 'wheel2', 'wheel3', 'wheel4', 'wheel5', 'wheel6', 'wheel7']
+
+class IVM_Repair(object):
+    def __init__(self):
+        self.ctrl = None
+        self.consumablesPanel = None
+        self.items = {
+            'extinguisher': [251, 251, None, None],
+            'medkit'      : [763, 1019, None, None],
+            'repairkit'   : [1275, 1531, None, None]
+        }
+        g_eventBus.addListener(events.ComponentEvent.COMPONENT_REGISTERED, self.__onComponentRegistered, EVENT_BUS_SCOPE.GLOBAL)
+        g_eventBus.addListener(events.ComponentEvent.COMPONENT_UNREGISTERED, self.__onComponentUnregistered, EVENT_BUS_SCOPE.GLOBAL)
+
+    def startBattle(self):
+        self.ctrl = BigWorld.player().guiSessionProvider.shared
+        InputHandler.g_instance.onKeyDown += self.injectButton
+        InputHandler.g_instance.onKeyUp += self.injectButton
+        self.checkBattleStarted()
+
+    def stopBattle(self):
+        InputHandler.g_instance.onKeyDown -= self.injectButton
+        InputHandler.g_instance.onKeyUp -= self.injectButton
+        for equipmentTag in self.items:
+            self.items[equipmentTag][2] = None
+            self.items[equipmentTag][3] = None
+        self.items['repairkit'][1] = 1531
+
+    def checkBattleStarted(self):
+        if hasattr(BigWorld.player(), 'arena') and BigWorld.player().arena.period is 3:
+            for equipmentTag in self.items:
+                self.items[equipmentTag][2] = self.ctrl.equipments.getEquipment(self.items[equipmentTag][0]) if self.ctrl.equipments.hasEquipment(self.items[equipmentTag][0]) else None
+                self.items[equipmentTag][3] = self.ctrl.equipments.getEquipment(self.items[equipmentTag][1]) if self.ctrl.equipments.hasEquipment(self.items[equipmentTag][1]) else None
+            equipmentTag = 'repairkit'
+            if self.ctrl.equipments.hasEquipment(46331):
+                self.items[equipmentTag][1] = 46331
+                self.items[equipmentTag][3] = self.ctrl.equipments.getEquipment(self.items[equipmentTag][1]) if self.ctrl.equipments.hasEquipment(self.items[equipmentTag][1]) else None
+        else:
+            BigWorld.callback(0.1, self.checkBattleStarted)
+
+    def useItem(self, equipmentTag, item=None):
+        if not config.data['repairEnabled']: return
+        if BattleReplay.g_replayCtrl.isPlaying: return
+        if self.ctrl is None:
+            return
+        equipment = self.ctrl.equipments.getEquipment(self.items[equipmentTag][0]) if self.ctrl.equipments.hasEquipment(self.items[equipmentTag][0]) else None
+        if equipment is not None and equipment.isReady and equipment.isAvailableToUse:
+            self.consumablesPanel._ConsumablesPanel__handleEquipmentPressed(self.items[equipmentTag][0], item)
+            sound = SoundGroups.g_instance.getSound2D('vo_flt_repair')
+            BigWorld.callback(1.0, sound.play)
+
+    def useItemGold(self, equipmentTag):
+        if not config.data['repairEnabled']: return
+        if BattleReplay.g_replayCtrl.isPlaying: return
+        if self.ctrl is None:
+            return
+        equipment = self.ctrl.equipments.getEquipment(self.items[equipmentTag][1]) if self.ctrl.equipments.hasEquipment(self.items[equipmentTag][1]) else None
+        if equipment is not None and equipment.isReady and equipment.isAvailableToUse:
+            self.consumablesPanel._ConsumablesPanel__handleEquipmentPressed(self.items[equipmentTag][1])
+            sound = SoundGroups.g_instance.getSound2D('vo_flt_repair')
+            BigWorld.callback(1.0, sound.play)
+
+    def extinguishFire(self):
+        if self.ctrl.vehicleState.getStateValue(VEHICLE_VIEW_STATE.FIRE):
+            equipmentTag = 'extinguisher'
+            if self.items[equipmentTag][2]:
+                self.useItem(equipmentTag)
+
+    def removeStun(self):
+        if self.ctrl.vehicleState.getStateValue(VEHICLE_VIEW_STATE.STUN):
+            equipmentTag = 'medkit'
+            if self.items[equipmentTag][2]:
+                self.useItem(equipmentTag)
+            elif config.data['useGoldKits'] and self.items[equipmentTag][3]:
+                self.useItemGold(equipmentTag)
+
+    def repair(self, equipmentTag):
+        specific = config.data['repairPriority'][Vehicle.getVehicleClassTag(BigWorld.player().vehicleTypeDescriptor.type.tags)][equipmentTag]
+        if config.data['useGoldKits'] and self.items[equipmentTag][3]:
+            equipment = self.items[equipmentTag][3]
+            if equipment is not None:
+                devices = [name for name, state in equipment.getEntitiesIterator() if state and state != DEVICE_STATE_NORMAL]
+                result = []
+                for device in specific:
+                    if device in COMPLEX_ITEM:
+                        itemName = COMPLEX_ITEM[device]
+                    else:
+                        itemName = device
+                    if itemName in devices:
+                        result.append(device)
+                if len(result) > 1:
+                    self.useItemGold(equipmentTag)
+                elif result:
+                    self.useItem(equipmentTag, result[0])
+        elif self.items[equipmentTag][2]:
+            equipment = self.items[equipmentTag][2]
+            if equipment is not None:
+                devices = [name for name, state in equipment.getEntitiesIterator() if state and state != DEVICE_STATE_NORMAL]
+                result = []
+                for device in specific:
+                    if device in COMPLEX_ITEM:
+                        itemName = COMPLEX_ITEM[device]
+                    else:
+                        itemName = device
+                    if itemName in devices:
+                        result.append(device)
+                if len(result) > 1:
+                    self.useItemGold(equipmentTag)
+                elif result:
+                    self.useItem(equipmentTag, result[0])
+
+    def repairAll(self):
+        if self.ctrl is None:
+            return
+        if config.data['extinguishFire']:
+            self.extinguishFire()
+        if config.data['repairDevices']:
+            self.repair('repairkit')
+        if config.data['healCrew']:
+            self.repair('medkit')
+        if config.data['removeStun']:
+            self.removeStun()
+        if config.data['restoreChassis']:
+            self.repairChassis()
+
+    def repairChassis(self):
+        if self.ctrl is None:
+            return
+        equipmentTag = 'repairkit'
+        for intCD, equipment in self.ctrl.equipments.iterEquipmentsByTag(equipmentTag):
+            if equipment.isReady and equipment.isAvailableToUse:
+                devices = [name for name, state in equipment.getEntitiesIterator() if state and state in DEVICE_STATE_DESTROYED]
+                for name in devices:
+                    if name in CHASSIS:
+                        self.useItem(equipmentTag, name)
+                        return
+
+    def __onComponentRegistered(self, event):
+        if event.alias == BATTLE_VIEW_ALIASES.CONSUMABLES_PANEL:
+            self.consumablesPanel = event.componentPy
+            self.startBattle()
+
+    def __onComponentUnregistered(self, event):
+        if event.alias == BATTLE_VIEW_ALIASES.CONSUMABLES_PANEL:
+            self.stopBattle()
+            
+repair = IVM_Repair()
