@@ -369,6 +369,7 @@ def ivm_checkConfig():
                 config.repairDevices = config.data['repairDevices']
                 config.restoreChassis = config.data['restoreChassis']
                 config.useGoldKits = config.data['useGoldKits']
+                config.repairPriority = config.data['repairPriority']
                 print '[IVM] Config Found'
         else:
             LOG_CURRENT_EXCEPTION()
