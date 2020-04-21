@@ -310,9 +310,10 @@ settings = {
     'removeStun': True
 }
 
-def onModSettingsChanged(linkage, newSettings):
+def onModSettingsChanged(linkage, settings):
+    self.settings = settings
     if linkage == modLinkage:
-        print 'onModSettingsChanged', newSettings
+        print 'onModSettingsChanged', settings
 
 def onButtonClicked(linkage, varName, value):
     if linkage == modLinkage:
@@ -356,9 +357,9 @@ def ivm_checkConfig():
                 config.stunEvent = config.data['stunEvent']
                 config.fireEnabled = config.data['fireEnabled']
                 config.fireEvent = config.data['fireEvent']
-                config.fixEffects = config.data['fixEvents']
-                config.emptyShellEnabled = config.data['emptyShellEnabled']
-                config.emptyShellEvent = config.data['emptyShellEvent']
+                config.fixEffects = config.data['fixEffects']
+                config.emptyShellsEnabled = config.data['emptyShellsEnabled']
+                config.emptyShellsEvent = config.data['emptyShellsEvent']
                 config.almostOutEvent = config.data['almostOutEvent']
                 config.fixVehicleTransparency = config.data['fixVehicleTransparency']
                 config.repairEnabled = config.data['repairEnabled']
@@ -492,9 +493,9 @@ if config.data['emptyShellsEnabled'] == True and config.TESTER == True:
             try:
                 quantity, quantitInClip = self.__ammo[intCD]
                 if quantity == 0 or quantitInClip == 0:
-                    SoundGroups_g_instance.playSound2D('emptyShellEvent')
+                    SoundGroups_g_instance.playSound2D(config.data['emptyShellsEvent'])
                 if quantity == 5 or quantitInClip == 5:
-                    SoundGroups_g_instance.playSound2D('almostOutEvent')
+                    SoundGroups_g_instance.playSound2D(config.data['almostOutEvent'])
             except KeyError :
                 LOG_ERROR('Shell is not found.', intCD)
                 quantity, quantityInClip = (SHELL_QUANTITY_UNKNOWN,) * 2
