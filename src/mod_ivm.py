@@ -57,6 +57,7 @@ class ConfigInterface(object):
             'carEnabled': False,
             'carRows': 1,
             'questHintEnabled': True,
+            'counterEnabled': True,
             'stunEnabled': False,
             'stunEvent': 'battle_event_stun',
             'fireEnabled': False,
@@ -201,6 +202,12 @@ template = {
             'value': 1,
             'format': '{{{1}}}',
             'varName': 'carRows'
+       },
+       {
+           'type': 'CheckBox',
+           'text': 'Enable Garage Counters',
+           'value': True,
+           'varName': 'counterEnabled'
        },
        {
            'type': 'Label',
@@ -352,6 +359,7 @@ def ivm_checkConfig():
                 config.enabled = config.data['enabled']
                 config.carEnabled = config.data['carEnabled']
                 config.carRows = config.data['carRows']
+                config.counterEnabled = config.data['counterEnabled']
                 config.questHintEnabled = config.data['questHintEnabled']
                 config.stunEnabled = config.data['stunEnabled']
                 config.stunEvent = config.data['stunEvent']
@@ -459,6 +467,15 @@ if config.data['carEnabled'] == True:
 else:
     print '[IVM] Tank Carousels Not Enabled'
     pass
+
+"""
+IVM Garage Counters
+"""
+if config.counterEnabled == True:
+    from gui.Scaleform.daapi.view.lobby.header.LobbyHeader import LobbyHeader
+    @overrideMethod(LobbyHeader, '_LobbyHeader__setCounter')
+    def ivm_setCounter(base, self, alias, counter=None):
+        base(self, alias, counter)
 
 """
 IVM Battle Hints Handler
