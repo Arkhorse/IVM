@@ -1,18 +1,130 @@
 {
-    "Carousels": {
-        "Rows": 3,
-        "Enabled": false
+    "healCrew": true,
+    "TESTER": true,
+    "repairDevices": true,
+    "fireEnabled": false,
+    "carEnabled": false,
+    "buttonChassis": [
+        [
+            56,
+            184
+        ]
+    ],
+    "extinguishFire": true,
+    "repairPriority": {
+        "AllAvailableVariables": {
+            "medkit": [
+                "commander",
+                "gunner",
+                "driver",
+                "radioman",
+                "loader"
+            ],
+            "repairkit": [
+                "engine",
+                "ammoBay",
+                "gun",
+                "turretRotator",
+                "chassis",
+                "surveyingDevice",
+                "radio",
+                "fuelTank",
+                "wheel"
+            ]
+        },
+        "AT-SPG": {
+            "medkit": [
+                "commander",
+                "loader",
+                "gunner",
+                "driver"
+            ],
+            "repairkit": [
+                "ammoBay",
+                "gun",
+                "engine",
+                "turretRotator",
+                "fuelTank"
+            ]
+        },
+        "lightTank": {
+            "medkit": [
+                "commander",
+                "driver",
+                "gunner",
+                "loader"
+            ],
+            "repairkit": [
+                "ammoBay",
+                "engine",
+                "gun",
+                "turretRotator",
+                "fuelTank"
+            ]
+        },
+        "heavyTank": {
+            "medkit": [
+                "commander",
+                "loader",
+                "gunner",
+                "driver"
+            ],
+            "repairkit": [
+                "ammoBay",
+                "gun",
+                "turretRotator",
+                "engine",
+                "fuelTank"
+            ]
+        },
+        "mediumTank": {
+            "medkit": [
+                "commander",
+                "loader",
+                "driver",
+                "gunner"
+            ],
+            "repairkit": [
+                "ammoBay",
+                "turretRotator",
+                "engine",
+                "gun",
+                "fuelTank"
+            ]
+        },
+        "SPG": {
+            "medkit": [
+                "commander",
+                "loader",
+                "gunner",
+                "driver"
+            ],
+            "repairkit": [
+                "ammoBay",
+                "gun",
+                "engine",
+                "turretRotator",
+                "fuelTank"
+            ]
+        }
     },
-    "Battle": {
-        /// Turn this to false if you dont want the panel
-        "questHint": true
-    },
-    "Replays": true,
-    /// If you want to know who helped, turn this to true
-    "Credits": false,
-    "debug": false,
-    "Sounds": {
-        "fireSoundEnabled": false,
-        "stunSoundEnabled": false
-    }
+    "fixEffects": false,
+    "stunEnabled": false,
+    "emptyShellsEvent": "IVM_emptyShellsEvent",
+    "restoreChassis": true,
+    "questHintEnabled": true,
+    "emptyShellsEnabled": false,
+    "carRows": 1,
+    "buttonRepair": [
+        57
+    ],
+    "stunEvent": "battle_event_stun",
+    "removeStun": true,
+    "fireEvent": "battle_event_fire",
+    "fixVehicleTransparency": false,
+    "repairEnabled": false,
+    "useGoldKits": false,
+    "enabled": true,
+    "almostOutEvent": "IVM_almostOutEvent",
+    "counterEnabled": false
 }

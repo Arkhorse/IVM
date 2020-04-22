@@ -6,7 +6,9 @@ import glob
 import traceback
 import re
 from math import fabs
-
+import inspect
+from functools import partial, update_wrapper
+import sys
 #Game Imports
 import BigWorld
 import BattleReplay
