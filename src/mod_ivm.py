@@ -28,10 +28,14 @@ from gui.battle_control.battle_constants import DEVICE_STATE_DESTROYED, VEHICLE_
 from gui.shared.gui_items import Vehicle
 from gui.Scaleform.genConsts.BATTLE_VIEW_ALIASES import BATTLE_VIEW_ALIASES
 from gui.shared import g_eventBus, events, EVENT_BUS_SCOPE
+#Ingame GUI
+from gui.modsSettingsApi import g_modsSettingsApi
+from gui.modsSettingsApi.skeleton import IModsSettingsApi
 
 modLinkage = 'mod_ivm'
 
 __name__ = 'IVM '
+MOD_NAME = 'IVM'
 __author__ = 'The Illusion '
 __copyright__ = 'Copyright 2020, The Illusion'
 __credits__ = ['The Illusion', 'RaJCel']
@@ -43,7 +47,33 @@ _FILE_ = './mods/configs/IVM/IVM.json'
 
 print '[IVM] ' + str(__name__) + 'By ' + str(__maintainer__) + ' Version ' + str(__status__), str(__version__)
 
-class ConfigInterface(object):
+class AbstractSettings(object):
+    
+    def __init__(self, name):
+        self.__name = name
+        self.__registerModSettings()
+
+    def __registerModSettings(self):
+        settingsTemplate = self.getSettingsTemplate()
+        savedSettings = g_modsSettingsApi.getModSettings(self.__name, settingsTemplate)
+        if savedSettings:
+            settings = savedSettings
+            g_modsSettingsApi.registerCallback(self.__name, self.__onModSettingsChanged)
+        else:
+            settings = g_modsSettingsApi.setModTemplate(self.__name, settingsTemplate, self.__onModSettingsChanged)
+        self.__onModSettingsChanged(self.__name, settings, True)
+
+    def __onModSettingsChanged(self, linkage, settings, isFirst=False):
+        if linkage == self.__name:
+            self.onSettingsUpdated(settings, isFirst)
+
+    def onSettingsUpdated(self, settings, isFirst):
+        pass
+
+    def getSettingsTemplate(self):
+        pass
+
+class ConfigInterface(AbstractSettings):
 
 
     def __init__(self):
@@ -54,294 +84,216 @@ class ConfigInterface(object):
             'buttonRepair' : [Keys.KEY_SPACE],
             'buttonChassis': [[Keys.KEY_LALT, Keys.KEY_RALT]]
         }
-        self.data = {
-            'enabled': True,
-            'carEnabled': False,
-            'carRows': 1,
-            'questHintEnabled': True,
-            'counterEnabled': True,
-            'stunEnabled': False,
-            'stunEvent': 'battle_event_stun',
-            'fireEnabled': False,
-            'fireEvent': 'battle_event_fire',
-            'fixEffects': False,
-            'fixVehicleTransparency': False,
-            'emptyShellsEnabled': False,
-            'emptyShellsEvent': 'IVM_emptyShellsEvent',
-            'almostOutEvent': 'IVM_almostOutEvent',
-            'TESTER': True,
-            'repairEnabled': False,
-            'buttonChassis' : self.defaultKeys['buttonChassis'],
-            'buttonRepair'  : self.defaultKeys['buttonRepair'],
-            'removeStun'    : True,
-            'extinguishFire': True,
-            'healCrew': True,
-            'repairDevices': True,
-            'restoreChassis': True,
-            'useGoldKits'   : False,
-            'repairPriority': {
-                'lightTank'            : {
-                    'medkit'   : ['commander', 'driver', 'gunner', 'loader'],
-                    'repairkit': ['ammoBay', 'engine', 'gun', 'turretRotator', 'fuelTank']
-                },
-                'mediumTank'           : {
-                    'medkit'   : ['commander', 'loader', 'driver', 'gunner'],
-                    'repairkit': ['ammoBay', 'turretRotator', 'engine', 'gun', 'fuelTank']
-                },
-                'heavyTank'            : {
-                    'medkit'   : ['commander', 'loader', 'gunner', 'driver'],
-                    'repairkit': ['ammoBay', 'gun', 'turretRotator', 'engine', 'fuelTank']
-                },
-                'SPG'                  : {
-                    'medkit'   : ['commander', 'loader', 'gunner', 'driver'],
-                    'repairkit': ['ammoBay', 'gun', 'engine', 'turretRotator', 'fuelTank']
-                },
-                'AT-SPG'               : {
-                    'medkit'   : ['commander', 'loader', 'gunner', 'driver'],
-                    'repairkit': ['ammoBay', 'gun', 'engine', 'turretRotator', 'fuelTank']
-                },
-                'AllAvailableVariables': {
-                    'medkit'   : ['commander', 'gunner', 'driver', 'radioman', 'loader'],
-                    'repairkit': ['engine', 'ammoBay', 'gun', 'turretRotator', 'chassis', 'surveyingDevice', 'radio', 'fuelTank', 'wheel']
+        self.config = {'templates': {
+                'modDisplayName': 'Improved Visuals and Sounds',
+                'settingsVersion': 0.2,
+                'enabled': True,
+                'column1': [
+                    {
+                        'type': 'Label',
+                        'text': 'In Battle Options'
+                    },
+                    {
+                        'type': 'CheckBox',
+                        'text': 'Missions Hint UI',
+                        'value': False,
+                        'tooltip': '{BODY} Turn this off if you dont want the missions hint UI at the start of the battle {/ BODY}',
+                        'varName': 'questHintEnabled'
+                    },
+                    {
+                        'type': 'Label',
+                        'text': 'Sound Options'
+                    },
+                    {
+                        'type': 'CheckBox',
+                        'text': 'Stun Sound',
+                        'value': False,
+                        'tooltip': '{HEADER} Turn this on if you want a Voice Over for when you are stunned. {/ HEADER} {BODY} This is the DeadPool one {/ BODY}',
+                        'varName': 'stunEnabled'
+                    },
+                    {
+                        'type': 'CheckBox',
+                        'text': 'Fire Sound',
+                        'value': False,
+                        'tooltip': '{HEADER} Turn this on if you want a Voice Over for when you are set on fire. {/ HEADER} {BODY} This is the DeadPool one. {/ BODY}',
+                        'varName': 'fireEnabled'
+                    },
+                    {
+                        'type': 'Label',
+                        'text': 'In Garage Options'
+                    },
+                    {
+                        'type': 'CheckBox',
+                        'text': 'Enable Carousel Function',
+                        'value': False,
+                        'tooltip': '{BODY} Turn this on if you want to use the carousel stuff{/ BODY}',
+                        'varName': 'carEnabled'
+                    },
+                    {
+                        'type': 'Slider',
+                        'text': 'The number of carousel rows you want',
+                        'minimum': 1,
+                        'maximum': 12,
+                        'snapInterval': 1,
+                        'value': 1,
+                        'format': '{{{1}}}',
+                        'varName': 'carRows'
+                    },
+                    {
+                        'type': 'CheckBox',
+                        'text': 'Enable Garage Counters',
+                        'value': True,
+                        'varName': 'counterEnabled'
+                    },
+                    {
+                        'type': 'Label',
+                        'text': 'Fixes, Ect'
+                    },
+                    {
+                        'type': 'CheckBox',
+                        'text': 'Effects List Spam',
+                        'tooltip': 'Removes the effects list spam from the python.log. This can cause this log to be very large. #WG',
+                        'value': False,
+                        'varName': 'fixEffects'
+                    },
+                    {
+                        'type': 'CheckBox',
+                        'text': 'Vehicle Model Transparency',
+                        'tooltip': 'Fixes a rare issue where the vehicle model isnt shown correctly',
+                        'value': False,
+                        'varName': 'fixVehicleTransparency'
+                    },
+                ],
+                'column2': [
+                    {
+                        'type': 'Label',
+                        'text': 'Repair Options'
+                    },
+                    {
+                        'type': 'Label',
+                        'text': 'Repair Options is legal. None of these options are automatic.'
+                    },
+                    {
+                        'type': 'CheckBox',
+                        'text': 'Enable',
+                        'value': False,
+                        'varName': 'repairEnabled'
+                    },
+                    {
+                        'type': 'HotKey',
+                        'text': 'Repair Tracks and Wheels',
+                        'value': [Keys.KEY_SPACE],
+                        'varName': 'buttonChassis'
+                    },
+                    {
+                        'type': 'HotKey',
+                        'text': 'Smart Repair',
+                        'value': [[Keys.KEY_LALT, Keys.KEY_RALT]],
+                        'varName': 'buttonRepair'
+                    },
+                    {
+                        'type': 'Label',
+                        'text': 'Smart Repair Options'
+                    },
+                    {
+                        'type': 'CheckBox',
+                        'text': 'Use Gold Kits',
+                        'value': False,
+                        'varName': 'useGoldKits'
+                    },
+                    {
+                        'type': 'CheckBox',
+                        'text': 'Repair Tracks and Wheels',
+                        'value': False,
+                        'varName': 'restoreChassis'
+                    },
+                    {
+                        'type': 'CheckBox',
+                        'text': 'Repair all Devices (Optics, Turret, Gun, Ect)',
+                        'value': False,
+                        'varName': 'repairDevices'
+                    },
+                    {
+                        'type': 'CheckBox',
+                        'text': 'Heal Crew',
+                        'value': False,
+                        'varName': 'healCrew'
+                    },
+                    {
+                        'type': 'CheckBox',
+                        'text': 'Extinguish Fires',
+                        'value': False,
+                        'varName': 'extinguishFire'
+                    },
+                    {
+                        'type': 'CheckBox',
+                        'text': 'Remove Stun',
+                        'value': False,
+                        'varName': 'removeStun'
+                    }]
+                }, 'settings': {
+                'enabled': True,
+                'carEnabled': False,
+                'carRows': 1,
+                'questHintEnabled': True,
+                'counterEnabled': True,
+                'stunEnabled': False,
+                'stunEvent': 'battle_event_stun',
+                'fireEnabled': False,
+                'fireEvent': 'battle_event_fire',
+                'fixEffects': False,
+                'fixVehicleTransparency': False,
+                'emptyShellsEnabled': False,
+                'emptyShellsEvent': 'IVM_emptyShellsEvent',
+                'almostOutEvent': 'IVM_almostOutEvent',
+                'TESTER': True,
+                'repairEnabled': False,
+                'buttonChassis' : self.defaultKeys['buttonChassis'],
+                'buttonRepair'  : self.defaultKeys['buttonRepair'],
+                'removeStun'    : True,
+                'extinguishFire': True,
+                'healCrew': True,
+                'repairDevices': True,
+                'restoreChassis': True,
+                'useGoldKits'   : False,
+                'repairPriority': {
+                    'lightTank'            : {
+                        'medkit'   : ['commander', 'driver', 'gunner', 'loader'],
+                        'repairkit': ['ammoBay', 'engine', 'gun', 'turretRotator', 'fuelTank']
+                    },
+                    'mediumTank'           : {
+                        'medkit'   : ['commander', 'loader', 'driver', 'gunner'],
+                        'repairkit': ['ammoBay', 'turretRotator', 'engine', 'gun', 'fuelTank']
+                    },
+                    'heavyTank'            : {
+                        'medkit'   : ['commander', 'loader', 'gunner', 'driver'],
+                        'repairkit': ['ammoBay', 'gun', 'turretRotator', 'engine', 'fuelTank']
+                    },
+                    'SPG'                  : {
+                        'medkit'   : ['commander', 'loader', 'gunner', 'driver'],
+                        'repairkit': ['ammoBay', 'gun', 'engine', 'turretRotator', 'fuelTank']
+                    },
+                    'AT-SPG'               : {
+                        'medkit'   : ['commander', 'loader', 'gunner', 'driver'],
+                        'repairkit': ['ammoBay', 'gun', 'engine', 'turretRotator', 'fuelTank']
+                    },
+                    'AllAvailableVariables': {
+                        'medkit'   : ['commander', 'gunner', 'driver', 'radioman', 'loader'],
+                        'repairkit': ['engine', 'ammoBay', 'gun', 'turretRotator', 'chassis', 'surveyingDevice', 'radio', 'fuelTank', 'wheel']
+                    }
                 }
-            }
-        }
-        self.i18n = {
-            'name': 'Improved Visuals and Sounds',
-            'UI_setting_carEnabled_text': 'Enable Carousel Module, you will need to reload to see the effect.',
-            'UI_setting_carRows_text': 'Number of rows you want',
-            'UI_setting_questHintEnabled_text': 'Turn this off if you dont want the mission hint at the start of battle',
-            'UI_setting_stunEnabled_text': 'Enable for a Voice Over when you are stunned',
-            'UI_setting_stunEnabled_tooltip': 'This can be altered in the config, requires WWISE',
-            'UI_setting_fireEnabled_text': 'Enable for a Voice Over when you are on fire',
-            'UI_setting_fireEnabled_tooltip': 'This can be altered in the config, requires WWISE',
-            'UI_setting_fixEffects_text': 'Disable Effects List Spam',
-            'UI_setting_fixEffects_tooltip': 'This is mostly for the python.log',
-            'UI_setting_fixVehicleTransparency_text': 'Fix Vehicle Model Transparency',
-            'UI_setting_NDA_text': ' \xe2\x80\xa2 No data available or provided.',
-            'UI_setting_emptyShellsEnabled_text': 'Enable No Shell Sound and 5 shell warning',
-            'UI_setting_emptyShellsEnabled_tooltip': 'This can be altered in the config, requires WWISE',
-            'UI_setting_TESTER_text': 'Tester',
-            'UI_setting_TESTER_tooltip': 'Enable this if you want to test new features',
-            'UI_setting_UI_changes_text': 'UI Changes',
-            'UI_setting_Sounds_text': 'Sounds',
-            'UI_setting_Fixes_text': 'Fixes',
-            'UI_setting_Carousel_Options_text': 'Carousel Options',
-            'UI_setting_Repair_text': 'Repair Options',
-            'UI_setting_repairEnabled_text': 'Enable',
-            'UI_setting_buttonChassis_text'   : 'Button: Restore Tracks and Wheels',
-            'UI_setting_buttonChassis_tooltip': '',
-            'UI_setting_buttonRepair_text'    : 'Button: Smart Repair',
-            'UI_setting_buttonRepair_tooltip' : '',
-            'UI_setting_removeStun_text'      : 'Remove Stun',
-            'UI_setting_removeStun_tooltip'   : '',
-            'UI_setting_useGoldKits_text'     : 'Use Premium Kits',
-            'UI_setting_useGoldKits_tooltip'  : '',
-            'UI_setting_extinguishFire_text'   : 'Extinguish Fire',
-            'UI_setting_extinguishFire_tooltip': '',
-            'UI_setting_healCrew_text'   : 'Heal Cew',
-            'UI_setting_healCrew_tooltip': '',
-            'UI_setting_restoreChassis_text'   : 'Restore Tracks and Wheels',
-            'UI_setting_restoreChassis_tooltip': '',
-            'UI_setting_repairDevices_text'   : 'Repair Devices',
-            'UI_setting_repairDevices_tooltip': '',
-            'UI_setting_smartRepair_text': 'Smart Repair Options'
-        }
+            }}
+        AbstractSettings.__init__(self, MOD_NAME)
+
+    #def getSettingsTemplate(self):
+        #return self.config['templates']
+    
+    def onSettingsUpdated(self, settings, isFirst=False):
+        self.settings = settings
+        if not isFirst:
+            settings = newSettings
 
 config = ConfigInterface()
-
-template = {
-    'modDisplayName': 'Improved Visuals and Sounds',
-    'settingsVersion': 0.2,
-    'enabled': True,
-    'column1': [
-        {
-            'type': 'Label',
-            'text': 'In Battle Options'
-        },
-        {
-            'type': 'CheckBox',
-            'text': 'Missions Hint UI',
-            'value': False,
-            'tooltip': '{BODY} Turn this off if you dont want the missions hint UI at the start of the battle {/ BODY}',
-            'varName': 'questHintEnabled'
-        },
-        {
-            'type': 'Label',
-            'text': 'Sound Options'
-        },
-        {
-            'type': 'CheckBox',
-            'text': 'Stun Sound',
-            'value': False,
-            'tooltip': '{HEADER} Turn this on if you want a Voice Over for when you are stunned. {/ HEADER} {BODY} This is the DeadPool one {/ BODY}',
-            'varName': 'stunEnabled'
-        },
-        {
-            'type': 'CheckBox',
-            'text': 'Fire Sound',
-            'value': False,
-            'tooltip': '{HEADER} Turn this on if you want a Voice Over for when you are set on fire. {/ HEADER} {BODY} This is the DeadPool one. {/ BODY}',
-            'varName': 'fireEnabled'
-        },
-        {
-            'type': 'Label',
-            'text': 'In Garage Options'
-        },
-        {
-            'type': 'CheckBox',
-            'text': 'Enable Carousel Function',
-            'value': False,
-            'tooltip': '{BODY} Turn this on if you want to use the carousel stuff{/ BODY}',
-            'varName': 'carEnabled'
-        },
-        {
-            'type': 'Slider',
-            'text': 'The number of carousel rows you want',
-            'minimum': 1,
-            'maximum': 12,
-            'snapInterval': 1,
-            'value': 1,
-            'format': '{{{1}}}',
-            'varName': 'carRows'
-       },
-       {
-           'type': 'CheckBox',
-           'text': 'Enable Garage Counters',
-           'value': True,
-           'varName': 'counterEnabled'
-       },
-       {
-           'type': 'Label',
-           'text': 'Fixes, Ect'
-       },
-       {
-           'type': 'CheckBox',
-           'text': 'Effects List Spam',
-           'tooltip': 'Removes the effects list spam from the python.log. This can cause this log to be very large. #WG',
-           'value': False,
-           'varName': 'fixEffects'
-       },
-       {
-           'type': 'CheckBox',
-           'text': 'Vehicle Model Transparency',
-           'tooltip': 'Fixes a rare issue where the vehicle model isnt shown correctly',
-           'value': False,
-           'varName': 'fixVehicleTransparency'
-       },
-    ],
-    'column2': [
-        {
-            'type': 'Label',
-            'text': 'Repair Options'
-        },
-        {
-            'type': 'Label',
-            'text': 'Repair Options is legal. None of these options are automatic.'
-        },
-        {
-            'type': 'CheckBox',
-            'text': 'Enable',
-            'value': False,
-            'varName': 'repairEnabled'
-        },
-        {
-            'type': 'HotKey',
-            'text': 'Repair Tracks and Wheels',
-            'value': [Keys.KEY_SPACE],
-            'varName': 'buttonChassis'
-        },
-        {
-            'type': 'HotKey',
-            'text': 'Smart Repair',
-            'value': [[Keys.KEY_LALT, Keys.KEY_RALT]],
-            'varName': 'buttonRepair'
-        },
-        {
-            'type': 'Label',
-            'text': 'Smart Repair Options'
-        },
-        {
-            'type': 'CheckBox',
-            'text': 'Use Gold Kits',
-            'value': False,
-            'varName': 'useGoldKits'
-        },
-        {
-            'type': 'CheckBox',
-            'text': 'Repair Tracks and Wheels',
-            'value': False,
-            'varName': 'restoreChassis'
-        },
-        {
-            'type': 'CheckBox',
-            'text': 'Repair all Devices (Optics, Turret, Gun, Ect)',
-            'value': False,
-            'varName': 'repairDevices'
-        },
-        {
-            'type': 'CheckBox',
-            'text': 'Heal Crew',
-            'value': False,
-            'varName': 'healCrew'
-        },
-        {
-            'type': 'CheckBox',
-            'text': 'Extinguish Fires',
-            'value': False,
-            'varName': 'extinguishFire'
-        },
-        {
-            'type': 'CheckBox',
-            'text': 'Remove Stun',
-            'value': False,
-            'varName': 'removeStun'
-        }
-    ]
-}
-
-settings = {
-    'questHintEnabled': False,
-    'soundStun1': False,
-    'soundFire1': False,
-    'carEnabled': False,
-    'carRows': 1,
-    'fixEffects': False,
-    'fixVehicleTransparency': False,
-    'repairEnabled': False,
-    'buttonChassis': [Keys.KEY_SPACE],
-    'buttonRepair': [[Keys.KEY_LALT, Keys.KEY_RALT]],
-    'useGoldKits': False,
-    'restoreChassis': True,
-    'repairDevices': True,
-    'healCrew': True,
-    'extinguishFire': True,
-    'removeStun': True
-}
-
-def onModSettingsChanged(linkage, settings):
-    self.settings = settings
-    if linkage == modLinkage:
-        print 'onModSettingsChanged', settings
-
-def onButtonClicked(linkage, varName, value):
-    if linkage == modLinkage:
-        print 'onButtonClicked', linkage, varName, value
-
-def onGameKeyDown(event):
-    if g_modsSettingsApi.checkKeySet(settings['buttonChassis'], settings['buttonRepair']):
-        print 'onHandleKeyEvent', settings['buttonChassis'], settings['buttonRepair']
-
-try:
-    from gui.modsSettingsApi import g_modsSettingsApi
-    savedSettings = g_modsSettingsApi.getModSettings((modLinkage, ), template)
-    if savedSettings:
-        settings = savedSettings
-        g_modsSettingsApi.registerCallback((modLinkage, ), onModSettingsChanged, onButtonClicked)
-    else:
-        settings = g_modsSettingsApi.setModTemplate((modLinkage, ), template, onModSettingsChanged, onButtonClicked)
-except:
-    pass
 
 def ivm_createConfig():
         data = {}
@@ -350,7 +302,7 @@ def ivm_createConfig():
         except:
             LOG_CURRENT_EXCEPTION()
         with open(_FILE_, 'w') as json_file:
-            jsonDump(config.data, json_file, separators=(',', ': '), indent=4, sort_keys=False)
+            jsonDump(config.config['settings'], json_file, separators=(',', ': '), indent=4, sort_keys=False)
             json_file.write('\n')
             print '[IVM] Config Not Found, New Config Generated'
 
@@ -358,29 +310,29 @@ def ivm_checkConfig():
         if path.exists(_FILE_):
             with open(_FILE_, 'r+') as f:
                 data = jsonLoad(f)
-                config.enabled = config.data['enabled']
-                config.carEnabled = config.data['carEnabled']
-                config.carRows = config.data['carRows']
-                config.counterEnabled = config.data['counterEnabled']
-                config.questHintEnabled = config.data['questHintEnabled']
-                config.stunEnabled = config.data['stunEnabled']
-                config.stunEvent = config.data['stunEvent']
-                config.fireEnabled = config.data['fireEnabled']
-                config.fireEvent = config.data['fireEvent']
-                config.fixEffects = config.data['fixEffects']
-                config.emptyShellsEnabled = config.data['emptyShellsEnabled']
-                config.emptyShellsEvent = config.data['emptyShellsEvent']
-                config.almostOutEvent = config.data['almostOutEvent']
-                config.fixVehicleTransparency = config.data['fixVehicleTransparency']
-                config.repairEnabled = config.data['repairEnabled']
-                config.removeStun = config.data['removeStun']
-                config.extinguishFire = config.data['extinguishFire']
-                config.repairPriority = config.data['repairPriority']
-                config.healCrew = config.data['healCrew']
-                config.repairDevices = config.data['repairDevices']
-                config.restoreChassis = config.data['restoreChassis']
-                config.useGoldKits = config.data['useGoldKits']
-                config.repairPriority = config.data['repairPriority']
+                enabled = config.config['settings']['enabled']
+                carEnabled = config.config['settings']['carEnabled']
+                carRows = config.config['settings']['carRows']
+                counterEnabled = config.config['settings']['counterEnabled']
+                questHintEnabled = config.config['settings']['questHintEnabled']
+                stunEnabled = config.config['settings']['stunEnabled']
+                stunEvent = config.config['settings']['stunEvent']
+                fireEnabled = config.config['settings']['fireEnabled']
+                fireEvent = config.config['settings']['fireEvent']
+                fixEffects = config.config['settings']['fixEffects']
+                emptyShellsEnabled = config.config['settings']['emptyShellsEnabled']
+                emptyShellsEvent = config.config['settings']['emptyShellsEvent']
+                almostOutEvent = config.config['settings']['almostOutEvent']
+                fixVehicleTransparency = config.config['settings']['fixVehicleTransparency']
+                repairEnabled = config.config['settings']['repairEnabled']
+                removeStun = config.config['settings']['removeStun']
+                extinguishFire = config.config['settings']['extinguishFire']
+                repairPriority = config.config['settings']['repairPriority']
+                healCrew = config.config['settings']['healCrew']
+                repairDevices = config.config['settings']['repairDevices']
+                restoreChassis = config.config['settings']['restoreChassis']
+                useGoldKits = config.config['settings']['useGoldKits']
+                repairPriority = config.config['settings']['repairPriority']
                 print '[IVM] Config Found'
         else:
             LOG_CURRENT_EXCEPTION()
@@ -389,6 +341,30 @@ def ivm_checkConfig():
             pass
 
 ivm_checkConfig()
+
+enabled = config.config['settings']['enabled']
+carEnabled = config.config['settings']['carEnabled']
+carRows = config.config['settings']['carRows']
+counterEnabled = config.config['settings']['counterEnabled']
+questHintEnabled = config.config['settings']['questHintEnabled']
+stunEnabled = config.config['settings']['stunEnabled']
+stunEvent = config.config['settings']['stunEvent']
+fireEnabled = config.config['settings']['fireEnabled']
+fireEvent = config.config['settings']['fireEvent']
+fixEffects = config.config['settings']['fixEffects']
+emptyShellsEnabled = config.config['settings']['emptyShellsEnabled']
+emptyShellsEvent = config.config['settings']['emptyShellsEvent']
+almostOutEvent = config.config['settings']['almostOutEvent']
+fixVehicleTransparency = config.config['settings']['fixVehicleTransparency']
+repairEnabled = config.config['settings']['repairEnabled']
+removeStun = config.config['settings']['removeStun']
+extinguishFire = config.config['settings']['extinguishFire']
+repairPriority = config.config['settings']['repairPriority']
+healCrew = config.config['settings']['healCrew']
+repairDevices = config.config['settings']['repairDevices']
+restoreChassis = config.config['settings']['restoreChassis']
+useGoldKits = config.config['settings']['useGoldKits']
+repairPriority = config.config['settings']['repairPriority']
 
 #@overrideMethod
 def overrideMethod(obj, prop, getter=None, setter=None, deleter=None):
@@ -450,9 +426,9 @@ def overrideMethod(obj, prop, getter=None, setter=None, deleter=None):
 IVM Carousel Handler
 """
 
-if config.data['carEnabled'] == True:
+if carEnabled == True:
     old_as_rowsCountS = TankCarouselMeta.as_rowCountS
-    tankrows = config.data['carRows']
+    tankrows = carRows
     def new_as_rowCountS(self, value):
         old_as_rowsCountS(self, value)
         if self._isDAAPIInited():
@@ -465,7 +441,7 @@ if config.data['carEnabled'] == True:
         self._carouselDP.updateVehicles(vehicles, filterCriteria)
         self.applyFilter()
 
-    print '[IVM] Tank Carousels Loaded with ' + str(config.data['carRows']) + ' rows'
+    print '[IVM] Tank Carousels Loaded with ' + str(carRows) + ' rows'
 else:
     print '[IVM] Tank Carousels Not Enabled'
     pass
@@ -473,7 +449,7 @@ else:
 """
 IVM Garage Counters
 """
-if config.counterEnabled == True:
+if counterEnabled == True:
     from gui.Scaleform.daapi.view.lobby.header.LobbyHeader import LobbyHeader
     @overrideMethod(LobbyHeader, '_LobbyHeader__setCounter')
     def ivm_setCounter(base, self, alias, counter=None):
@@ -483,7 +459,7 @@ if config.counterEnabled == True:
 IVM Battle Hints Handler
 """
 #Mission Hint Panel
-if config.data['questHintEnabled'] == False:
+if questHintEnabled == False:
     old_quest_Hint = PreBattleHintPlugin._PreBattleHintPlugin__canDisplayQuestHint
     def ivm_questHint(self):
         old_quest_Hint(self)
@@ -498,7 +474,7 @@ else:
 IVM Stun Sound Handler
 """
 
-if config.data['stunEnabled'] == True:
+if stunEnabled == True:
     #assign old event
     old_DestroyTimersPanel__showStunTimer = DestroyTimersPanel._DestroyTimersPanel__showStunTimer
     #define new event
@@ -508,7 +484,7 @@ if config.data['stunEnabled'] == True:
         try:
             if value.duration > 0.0:
                 #play sound at event 'battle_event_stun'
-                SoundGroups_g_instance.playSound2D(config.data['stunEvent'])
+                SoundGroups_g_instance.playSound2D(stunEvent)
         except:
             #if that doesnt work, log the error
             print '[ERROR][IVM] Stun Sound Not Played'
@@ -524,7 +500,7 @@ else:
 """
 IVM fire sound handler
 """
-if config.data['fireEnabled'] == True:
+if fireEnabled == True:
     #assign old event
     old_DestroyTimersPanel__setFireInVehicle = DestroyTimersPanel._DestroyTimersPanel__setFireInVehicle
 
@@ -533,7 +509,7 @@ if config.data['fireEnabled'] == True:
         try:
             if isInFire:
                 #play sound at event 'battle_event_fire'
-                SoundGroups_g_instance.playSound2D(config.data['fireEvent'])
+                SoundGroups_g_instance.playSound2D(fireEvent)
             else:
                 self._hideTimer(_TIMER_STATES.FIRE)
             return
@@ -552,7 +528,7 @@ else:
 """
 IVM Empty Shells
 """
-if config.data['emptyShellsEnabled'] == True and config.TESTER == True:
+if emptyShellsEnabled == True:
     #Debug
         from gui.battle_control.controllers.consumables import ammo_ctrl
         old_getShells = ammo_ctrl.AmmoController_getShells
@@ -568,9 +544,9 @@ if config.data['emptyShellsEnabled'] == True and config.TESTER == True:
             try:
                 quantity, quantitInClip = self.__ammo[intCD]
                 if quantity == 0 or quantitInClip == 0:
-                    SoundGroups_g_instance.playSound2D(config.data['emptyShellsEvent'])
+                    SoundGroups_g_instance.playSound2D(emptyShellsEvent)
                 if quantity == 5 or quantitInClip == 5:
-                    SoundGroups_g_instance.playSound2D(config.data['almostOutEvent'])
+                    SoundGroups_g_instance.playSound2D(almostOutEvent)
             except KeyError :
                 LOG_ERROR('Shell is not found.', intCD)
                 quantity, quantityInClip = (SHELL_QUANTITY_UNKNOWN,) * 2
@@ -582,7 +558,7 @@ else:
 IVM Fixes
 """
 # Effects List Spam Fix
-if config.data['fixEffects'] == True:
+if fixEffects == True:
     from helpers import EffectsList
     EffectsList.LOG_WARNING = lambda *_, **__: None
     print 'Effects List Spam Fix by ' + str(__name__), str(__version__) + ' done.'
@@ -590,7 +566,7 @@ else:
     pass
 
 # Vehicle Model Transparency Fix
-if config.data['fixVehicleTransparency'] == True:
+if fixVehicleTransparency == True:
     from vehicle_systems.components.highlighter import Highlighter
     def IVM_doHighlight(self, status, args):
         if self._Highlighter__isPlayersVehicle:
@@ -666,7 +642,7 @@ class IVM_Repair(object):
             BigWorld.callback(0.1, self.checkBattleStarted)
 
     def useItem(self, equipmentTag, item=None):
-        if not config.data['repairEnabled']: return
+        if not repairEnabled: return
         if BattleReplay.g_replayCtrl.isPlaying: return
         if self.ctrl is None:
             return
@@ -677,7 +653,7 @@ class IVM_Repair(object):
             BigWorld.callback(1.0, sound.play)
 
     def useItemGold(self, equipmentTag):
-        if not config.data['repairEnabled']: return
+        if not repairEnabled: return
         if BattleReplay.g_replayCtrl.isPlaying: return
         if self.ctrl is None:
             return
@@ -698,12 +674,12 @@ class IVM_Repair(object):
             equipmentTag = 'medkit'
             if self.items[equipmentTag][2]:
                 self.useItem(equipmentTag)
-            elif config.data['useGoldKits'] and self.items[equipmentTag][3]:
+            elif useGoldKits and self.items[equipmentTag][3]:
                 self.useItemGold(equipmentTag)
 
     def repair(self, equipmentTag):
-        specific = config.data['repairPriority'][Vehicle.getVehicleClassTag(BigWorld.player().vehicleTypeDescriptor.type.tags)][equipmentTag]
-        if config.data['useGoldKits'] and self.items[equipmentTag][3]:
+        specific = repairPriority[Vehicle.getVehicleClassTag(BigWorld.player().vehicleTypeDescriptor.type.tags)][equipmentTag]
+        if useGoldKits and self.items[equipmentTag][3]:
             equipment = self.items[equipmentTag][3]
             if equipment is not None:
                 devices = [name for name, state in equipment.getEntitiesIterator() if state and state != DEVICE_STATE_NORMAL]
@@ -739,15 +715,15 @@ class IVM_Repair(object):
     def repairAll(self):
         if self.ctrl is None:
             return
-        if config.data['extinguishFire']:
+        if extinguishFire:
             self.extinguishFire()
-        if config.data['repairDevices']:
+        if repairDevices:
             self.repair('repairkit')
-        if config.data['healCrew']:
+        if healCrew:
             self.repair('medkit')
-        if config.data['removeStun']:
+        if removeStun:
             self.removeStun()
-        if config.data['restoreChassis']:
+        if restoreChassis:
             self.repairChassis()
 
     def repairChassis(self):

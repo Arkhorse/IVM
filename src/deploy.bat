@@ -9,6 +9,5 @@ cd "E:\Python\IVM\IVM\src\IVM"
 echo "Ziping and moving"
 @echo off
 7z a -tzip -mx0 TheIllusion.IVM.wotmod "res"
-move /y "E:\Python\IVM\IVM\src\IVM\TheIllusion.IVM.wotmod" "J:\World_of_Tanks_NA\mods\1.9.0.0\"
+move /y "E:\Python\IVM\IVM\src\IVM\TheIllusion.IVM.wotmod" "J:\World_of_Tanks_NA\mods\1.9.0.1\"
 echo "Finished"
-pause
