@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "ivm\\res\\scripts\\client\\gui\\mods"
+		},
+		{
+			"path": "F:\\Mods\\WG source\\scripts\\source\\res\\scripts\\client"
+		},
+		{
+			"path": "..\\..\\..\\..\\PYmods\\source\\scripts\\client"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "ivm\\res\\scripts\\client\\gui\\mods\\ivm"
+		}
+	],
+	"settings": {
+		"python.pythonPath": "c:\\Python27\\python.exe"
+	}
+}
