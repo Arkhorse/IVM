@@ -1,6 +1,7 @@
 import BigWorld
 from ..mod_ivm import Version
-from PYmodsCore import PYmodsConfigInterface, overrideMethod
+from utils import overrideMethod
+from PYmodsCore import PYmodsConfigInterface
 from gui.Scaleform.daapi.view.battle.shared.hint_panel.plugins import PreBattleHintPlugin
 
 
