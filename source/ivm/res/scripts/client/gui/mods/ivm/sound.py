@@ -6,7 +6,8 @@ from gui.Scaleform.daapi.view.battle.shared.destroy_timers_panel import DestroyT
 from debug_utils import LOG_CURRENT_EXCEPTION
 import BigWorld
 from ..mod_ivm import Version
-from PYmodsCore import PYmodsConfigInterface, overrideMethod
+from utils import overrideMethod
+from PYmodsCore import PYmodsConfigInterface
 
 class ivmSound(PYmodsConfigInterface):
 
