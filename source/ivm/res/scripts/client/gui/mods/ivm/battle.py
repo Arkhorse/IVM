@@ -1,6 +1,6 @@
 import BigWorld
 from ..mod_ivm import Version
-from utils import overrideMethod
+from utils import override
 from PYmodsCore import PYmodsConfigInterface
 from gui.Scaleform.daapi.view.battle.shared.hint_panel.plugins import PreBattleHintPlugin
 
@@ -32,11 +32,17 @@ class ivmBattle(PYmodsConfigInterface):
 config = ivmBattle()
 questHintEnabled = config.data['questHintEnabled']
 
-@overrideMethod(PreBattleHintPlugin, '_PreBattleHintPlugin__canDisplayQuestHint')
-def ivmQuestHint(self):
-    if not questHintEnabled:
-        print '[IVM] Quest Hint Skipped'
-        return
-    else:
-        print '[IVM][LOAD] Missions Hint Panel Disabled'
-    return None
+class IVMQuestHint(object):
+
+    def __init__(self):
+        override(PreBattleHintPlugin, '_PreBattleHintPlugin__canDisplayQuestHint', self.ivmQuestHint)
+    
+    # @overrideMethod(PreBattleHintPlugin, '_PreBattleHintPlugin__canDisplayQuestHint')
+    def ivmQuestHint(self, baseFunc, baseSelf):
+        if not questHintEnabled:
+            print '[IVM] Quest Hint Skipped'
+            return
+        else:
+            
+            print '[IVM][LOAD] Missions Hint Panel Disabled'
+            return None
