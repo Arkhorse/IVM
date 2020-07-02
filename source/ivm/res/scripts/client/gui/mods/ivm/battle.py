@@ -32,17 +32,18 @@ class ivmBattle(PYmodsConfigInterface):
 config = ivmBattle()
 questHintEnabled = config.data['questHintEnabled']
 
-class IVMQuestHint(object):
-
-    def __init__(self):
-        override(PreBattleHintPlugin, '_PreBattleHintPlugin__canDisplayQuestHint', self.ivmQuestHint)
     
-    # @overrideMethod(PreBattleHintPlugin, '_PreBattleHintPlugin__canDisplayQuestHint')
-    def ivmQuestHint(self, baseFunc, baseSelf):
-        if not questHintEnabled:
-            print '[IVM] Quest Hint Skipped'
-            return
-        else:
-            
-            print '[IVM][LOAD] Missions Hint Panel Disabled'
-            return None
+# @overrideMethod(PreBattleHintPlugin, '_PreBattleHintPlugin__canDisplayQuestHint')
+oldQuestHint_WG = PreBattleHintPlugin._PreBattleHintPlugin__canDisplayQuestHint
+
+def ivmQuestHint(self):
+    oldQuestHint_WG(self)
+    if not questHintEnabled:
+        print '[IVM] Quest Hint Skipped'
+        return
+    else:
+        
+        print '[IVM][LOAD] Missions Hint Panel Disabled'
+        return None
+
+PreBattleHintPlugin._PreBattleHintPlugin__canDisplayQuestHint = ivmQuestHint
