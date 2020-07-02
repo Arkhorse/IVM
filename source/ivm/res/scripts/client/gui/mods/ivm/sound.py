@@ -6,7 +6,7 @@ from gui.Scaleform.daapi.view.battle.shared.destroy_timers_panel import DestroyT
 from debug_utils import LOG_CURRENT_EXCEPTION
 import BigWorld
 from ..mod_ivm import Version
-from utils import overrideMethod
+#from utils import override
 from PYmodsCore import PYmodsConfigInterface
 
 class ivmSound(PYmodsConfigInterface):
@@ -57,8 +57,10 @@ emptyShellsEnabled = config.data['emptyShellsEnabled']
 emptyShellsEvent = config.data['emptyShellsEvent']
 almostOutEvent = config.data['almostOutEvent']
 
-@overrideMethod(DestroyTimersPanel, '_DestroyTimersPanel__setFireInVehicle')
+#@overrideMethod(DestroyTimersPanel, '_DestroyTimersPanel__setFireInVehicle')
+oldFire_WG = DestroyTimersPanel._DestroyTimersPanel__setFireInVehicle
 def ivm_setFireInVehicle(self, isInFire):
+    oldFire_WG(self, isInFire)
     try:
         if not fireEnabled:
             print '[IVM] Fire Event Skipped'
@@ -76,8 +78,12 @@ def ivm_setFireInVehicle(self, isInFire):
         LOG_CURRENT_EXCEPTION()
     print '[IVM][LOAD] IVM Fire Sound Loaded'
 
-@overrideMethod(DestroyTimersPanel, '_DestroyTimersPanel__showStunTimer')
+DestroyTimersPanel._DestroyTimersPanel__setFireInVehicle = ivm_setFireInVehicle
+
+#@overrideMethod(DestroyTimersPanel, '_DestroyTimersPanel__showStunTimer')
+oldStun_WG = DestroyTimersPanel._DestroyTimersPanel__showStunTimer
 def ivm_stunSound(self, value):
+    oldStun_WG(self, value)
     try:
         if not stunEnabled:
             print '[IVM] Stun Event Skipped'
@@ -91,10 +97,14 @@ def ivm_stunSound(self, value):
         print '[ERROR][IVM] Stun Sound Not Played'
         LOG_CURRENT_EXCEPTION()
 
+DestroyTimersPanel._DestroyTimersPanel__showStunTimer = ivm_stunSound
+
 from gui.battle_control.controllers.consumables.ammo_ctrl import AmmoController
 
-@overrideMethod(AmmoController, 'getShells')
+#@overrideMethod(AmmoController, 'getShells')
+oldShells_WG = AmmoController.getShells
 def ivm_getShells(self, intCD):
+    oldShells_WG(self, intCD)
     if not emptyShellsEnabled:
         print '[IVM] Shells Events Skipped'
         return
@@ -110,3 +120,4 @@ def ivm_getShells(self, intCD):
         LOG_ERROR('Shell is not found.', intCD)
         quantity, quantityInClip = (SHELL_QUANTITY_UNKNOWN,) * 2
         
+AmmoController.getShells = ivm_getShells
