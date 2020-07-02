@@ -1,6 +1,6 @@
 import BigWorld
 from ..mod_ivm import Version, ModIDShort, debug
-from .utils import override
+#from .utils import override
 from gui.Scaleform.daapi.view.meta.TankCarouselMeta import TankCarouselMeta
 
 try:
@@ -39,30 +39,15 @@ config = ivmGarage()
 carEnabled = config.data['carEnabled']
 carRows = config.data['carRows']
 
-
-#print ModIDShort, 'Carousel Options Enabled'
-#if debug:
-#    print ModIDShort, carEnabled, carRows
-#old_as_rowsCountS = TankCarouselMeta.as_rowCountS
-#
-#def new_as_rowCountS(self, value):
-#    old_as_rowsCountS(self, value)
-#    if self._isDAAPIInited():
-#        return self.flashObject.as_rowCount(carRows)
-#TankCarouselMeta.as_rowCountS = new_as_rowCountS]
-
-class IVMCarouel(object):
-
-    def __init__(self):
-        override(TankCarouselMeta, 'as_rowCountS', self.ivmCarouselS)
-
-    # @overrideMethod(TankCarouselMeta, 'as_rowCountS')
-    def ivmCarouselS(self, baseFunc, baseSelf, value):
-        if not carEnabled:
-            print '[IVM] Carousels Not Enabled'
-            return self.flashObject.as_rowCount(value) if self._isDAAPIInited() else None
-        if self._isDAAPIInited():
-            baseSelf.clear()
-            print '[IVM] Carousels Enabled with %s Rows' % (carRows)
-            return self.flashObject.as_rowCount(carRows)
-
+# @overrideMethod(TankCarouselMeta, 'as_rowCountS')
+old_as_rowsCountS = TankCarouselMeta.as_rowCountS
+def ivmCarouselS(self, value):
+    old_as_rowsCountS(self, value)
+    if not carEnabled:
+        print '[IVM] Carousels Not Enabled'
+        return self.flashObject.as_rowCount(value) if self._isDAAPIInited() else None
+    else:
+        print '[IVM] Carousels Enabled with %s Rows' % (carRows)
+        return self.flashObject.as_rowCount(carRows) if self._isDAAPIInited() else None
+TankCarouselMeta.as_rowCountS = ivmCarouselS
+#override(TankCarouselMeta, 'as_rowCountS', ivmCarouselS)
