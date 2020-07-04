@@ -35,9 +35,6 @@ def _RegisterEvent(handler, cls, method, prepend=False):
     if hasattr(cls, evt):
         e = getattr(cls, evt)
     else:
-<<<<<<< Updated upstream
-        return partial(overrideMethod, obj, prop)
-=======
         newm = '__orig_%i_%s' % ((1 if prepend else 0), method)
         setattr(cls, evt, EventHook())
         setattr(cls, newm, getattr(cls, method))
@@ -97,4 +94,3 @@ registerEvent = _hook_decorator(_RegisterEvent)
 overrideMethod = _hook_decorator(_OverrideMethod)
 overrideStaticMethod = _hook_decorator(_OverrideStaticMethod)
 overrideClassMethod = _hook_decorator(_OverrideClassMethod)
->>>>>>> Stashed changes
