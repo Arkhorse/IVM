@@ -39,8 +39,6 @@ config = ivmGarage()
 carEnabled = config.data['carEnabled']
 carRows = config.data['carRows']
 
-<<<<<<< Updated upstream
-
 #print ModIDShort, 'Carousel Options Enabled'
 #if debug:
 #    print ModIDShort, carEnabled, carRows
@@ -54,22 +52,11 @@ carRows = config.data['carRows']
 
 @overrideMethod(TankCarouselMeta, 'as_rowCountS')
 def ivmCarouselS(self, value):
-=======
-@overrideMethod(TankCarouselMeta, 'as_rowCountS')
-#old_as_rowsCountS = TankCarouselMeta.as_rowCountS
-def ivmCarouselS(self, value):
-    #old_as_rowsCountS(self, value)
->>>>>>> Stashed changes
     if not carEnabled:
         print '[IVM] Carousels Not Enabled'
         return
     if self._isDAAPIInited():
         print '[IVM] Carousels Enabled with %s Rows' % (carRows)
-<<<<<<< Updated upstream
-        return self.flashObject.as_rowCount(carRows)
-
-=======
         return self.flashObject.as_rowCount(carRows) if self._isDAAPIInited() else None
 #TankCarouselMeta.as_rowCountS = ivmCarouselS
 #override(TankCarouselMeta, 'as_rowCountS', ivmCarouselS)
->>>>>>> Stashed changes
