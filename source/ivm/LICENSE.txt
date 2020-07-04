@@ -1,0 +1,4 @@
+You may use any code in here on the following conditions:
+
+1. All mods containing code from this mod MUST be open source.
+2. You must thank me. This can be done either in code comments, in the mods Licence, or where the mod is posted. Up to you.
