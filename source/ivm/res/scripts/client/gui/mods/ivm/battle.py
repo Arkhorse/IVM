@@ -1,11 +1,5 @@
 import BigWorld
-<<<<<<< Updated upstream
-from ..mod_ivm import Version
-from utils import overrideMethod
-from PYmodsCore import PYmodsConfigInterface
-=======
 # Disable Starting hint
->>>>>>> Stashed changes
 from gui.Scaleform.daapi.view.battle.shared.hint_panel.plugins import PreBattleHintPlugin
 # Disable destroyed messages imports
 from gui.Scaleform.daapi.view.battle.shared.messages.fading_messages import FadingMessages
@@ -44,24 +38,17 @@ config = ivmBattle()
 questHintEnabled = config.data['questHintEnabled']
 notShowBattleMessage = config.data['notShowBattleMessage']
 
-<<<<<<< Updated upstream
-@overrideMethod(PreBattleHintPlugin, '_PreBattleHintPlugin__canDisplayQuestHint')
-def ivmQuestHint(self):
-=======
 #oldQuestHint_WG = PreBattleHintPlugin._PreBattleHintPlugin__canDisplayQuestHint
 @overrideMethod(PreBattleHintPlugin, '_PreBattleHintPlugin__canDisplayQuestHint')
 def ivmQuestHint(base, self):
     #oldQuestHint_WG(self)
->>>>>>> Stashed changes
     if not questHintEnabled:
         print '[IVM] Quest Hint Skipped'
         return base(self)
     else:
         print '[IVM][LOAD] Missions Hint Panel Disabled'
-<<<<<<< Updated upstream
-    return None
-=======
         return None
+
 
 #PreBattleHintPlugin._PreBattleHintPlugin__canDisplayQuestHint = ivmQuestHint
 
@@ -81,4 +68,3 @@ def FadingMessages_showMessage(base, self, key, args=None, extra=None, postfix='
     # if not isFrontLine:
     #     return base(self, key, args, extra, postfix)
     pass
->>>>>>> Stashed changes
