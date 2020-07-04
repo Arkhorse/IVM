@@ -22,8 +22,13 @@ def getOSVersion():
     OSVersion = platform.version()
     print OSPlatform, OSReadable, OSVersion 
 
-
 getOSVersion()
+
+from gui import SystemMessages
+
+def onAccountShowGUI(ctx, msg):
+    alert = msg
+    SystemMessages.pushMessage(alert, type=SystemMessages.SM_TYPE.Warning)
 
 garage = True
 sound = True
@@ -54,6 +59,8 @@ except ImportError:
     pass
 
 if not garage or not sound or not battle:
+    onAccountShowGUI(msg='IVM No modules found. Redownload the mod.')
     print ModIDShort, 'Modules Not Found, Redownload Mod'
 else:
+    onAccountShowGUI(msg='IVM Modules Loaded')
     print ModIDShort, 'Loaded', 'Version', Version[1]
