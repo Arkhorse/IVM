@@ -1,4 +1,5 @@
 import os
+from gui import SystemMessages
 
 __all__ = ('Author', 'Version', 'ModIDShort')
 Author = 'The Illusion'
@@ -11,6 +12,7 @@ ModIDShort = 'IVM'
 ModIDLong = 'Improved Visuals and Sounds'
 DIR = os.path.join('mods', 'configs', 'ivm')
 FILE = DIR, 'ivm.json'
+downloadURL = ''
 
 print ModIDShort, 'Loading', Version[0]
 
@@ -23,12 +25,6 @@ def getOSVersion():
     print OSPlatform, OSReadable, OSVersion 
 
 getOSVersion()
-
-from gui import SystemMessages
-
-def onAccountShowGUI(ctx, msg):
-    alert = msg
-    SystemMessages.pushMessage(alert, type=SystemMessages.SM_TYPE.Warning)
 
 garage = True
 sound = True
@@ -59,8 +55,8 @@ except ImportError:
     pass
 
 if not garage or not sound or not battle:
-    onAccountShowGUI(msg='IVM No modules found. Redownload the mod.')
-    print ModIDShort, 'Modules Not Found, Redownload Mod'
+    SystemMessages.pushMessage(text='[IVM] Modules not found. Redownload Mod', type=SystemMessages.SM_TYPE.Error)
+    print ModIDShort, 'Modules Not Found, Redownload Mod @ %s' % (downloadURL)
 else:
-    onAccountShowGUI(msg='IVM Modules Loaded')
+    SystemMessages.pushMessage(text='[IVM] Loaded. Have fun. Don\'t get artied', type=SystemMessages.SM_TYPE.Information)
     print ModIDShort, 'Loaded', 'Version', Version[1]
