@@ -58,11 +58,11 @@ emptyShellsEvent = config.data['emptyShellsEvent']
 almostOutEvent = config.data['almostOutEvent']
 
 @overrideMethod(DestroyTimersPanel, '_DestroyTimersPanel__setFireInVehicle')
-def ivm_setFireInVehicle(self, isInFire):
+def ivm_setFireInVehicle(base, self, isInFire):
     try:
         if not fireEnabled:
             print '[IVM] Fire Event Skipped'
-            return
+            return base(self, isInFire)
         if isInFire:
             # play sound at event 'battle_event_fire'
             SoundGroups_g_instance.playSound2D(fireEvent)
@@ -77,11 +77,11 @@ def ivm_setFireInVehicle(self, isInFire):
     print '[IVM][LOAD] IVM Fire Sound Loaded'
 
 @overrideMethod(DestroyTimersPanel, '_DestroyTimersPanel__showStunTimer')
-def ivm_stunSound(self, value):
+def ivm_stunSound(base, self, value):
     try:
         if not stunEnabled:
             print '[IVM] Stun Event Skipped'
-            return
+            return base(self, value)
         if value.duration > 0.0:
             # play sound at event 'battle_event_stun'
             SoundGroups_g_instance.playSound2D(stunEvent)
@@ -94,10 +94,10 @@ def ivm_stunSound(self, value):
 from gui.battle_control.controllers.consumables.ammo_ctrl import AmmoController
 
 @overrideMethod(AmmoController, 'getShells')
-def ivm_getShells(self, intCD):
+def ivm_getShells(base, self, intCD):
     if not emptyShellsEnabled:
         print '[IVM] Shells Events Skipped'
-        return
+        return base(self, intCD)
     try:
         quantity, quantitInClip = self.__ammo[intCD]
         if quantity == 0 or quantitInClip == 0:
