@@ -51,10 +51,10 @@ carRows = config.data['carRows']
 #TankCarouselMeta.as_rowCountS = new_as_rowCountS]
 
 @overrideMethod(TankCarouselMeta, 'as_rowCountS')
-def ivmCarouselS(self, value):
+def ivmCarouselS(base, self, value):
     if not carEnabled:
         print '[IVM] Carousels Not Enabled'
-        return
+        return base(self, value)
     if self._isDAAPIInited():
         print '[IVM] Carousels Enabled with %s Rows' % (carRows)
         return self.flashObject.as_rowCount(carRows) if self._isDAAPIInited() else None
