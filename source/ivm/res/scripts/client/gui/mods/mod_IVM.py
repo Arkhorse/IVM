@@ -1,30 +1,5 @@
 import os
-from gui import SystemMessages
 
-__all__ = ('Author', 'Version', 'ModIDShort')
-Author = 'The Illusion'
-Credits = 'RaJCel'
-Version = ['Rel 0 ', 'Patch 0.02']
-Status = 'Dev'
-debug = True
-ModIDInternal = 'mod_ivm'
-ModIDShort = 'IVM'
-ModIDLong = 'Improved Visuals and Sounds'
-DIR = os.path.join('mods', 'configs', 'ivm')
-FILE = DIR, 'ivm.json'
-downloadURL = ''
-
-print ModIDShort, 'Loading', Version[0]
-
-def getOSVersion():
-    # Needed for Support. If the OSReadable is less than Windows 7, No support will be given.
-    import platform
-    OSPlatform = platform.system()
-    OSReadable = platform.release()
-    OSVersion = platform.version()
-    print OSPlatform, OSReadable, OSVersion 
-
-getOSVersion()
 
 garage = True
 sound = True
