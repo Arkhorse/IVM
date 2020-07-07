@@ -1,19 +1,22 @@
-from SoundGroups import g_instance as SoundGroups_g_instance
 from gui.battle_control.controllers.consumables import ammo_ctrl
 from gui.battle_control.controllers.consumables.ammo_ctrl import AmmoController, _GunSettings
 from gui.Scaleform.daapi.view.battle.shared import destroy_timers_panel
 from gui.Scaleform.daapi.view.battle.shared.destroy_timers_panel import DestroyTimersPanel
+from gui.Scaleform.daapi.view.battle.shared.crosshair.plugins import AmmoPlugin
 from debug_utils import LOG_CURRENT_EXCEPTION
 import BigWorld
-from ..mod_ivm import Version
-from utils import overrideMethod
-from PYmodsCore import PYmodsConfigInterface
+
+from Core import overrideMethod, CORE
+try:
+    from PYmodsCore import PYmodsConfigInterface
+except ImportError:
+    print '%s Fatal Error! A dependency is not found' % (CORE.ModIDShort)
 
 class ivmSound(PYmodsConfigInterface):
 
     def init(self):
         self.ID = 'ivmSound'
-        self.version = Version
+        self.version = CORE.Version
         self.modsGroups = 'IVM'
         self.data = {
             'enabled': True,
@@ -65,7 +68,7 @@ def ivm_setFireInVehicle(base, self, isInFire):
             return base(self, isInFire)
         if isInFire:
             # play sound at event 'battle_event_fire'
-            SoundGroups_g_instance.playSound2D(fireEvent)
+            CORE.send2DSoundEvent(fireEvent)
             print '[IVM] Player On Fire'
         else:
             self._hideTimer(_TIMER_STATES.FIRE)
@@ -84,7 +87,7 @@ def ivm_stunSound(base, self, value):
             return base(self, value)
         if value.duration > 0.0:
             # play sound at event 'battle_event_stun'
-            SoundGroups_g_instance.playSound2D(stunEvent)
+            CORE.send2DSoundEvent(stunEvent)
             print '[IVM] Player Stunned'
     except:
         # if that doesnt work, log the error
@@ -99,13 +102,14 @@ def ivm_getShells(base, self, intCD):
         print '[IVM] Shells Events Skipped'
         return base(self, intCD)
     try:
-        quantity, quantitInClip = self.__ammo[intCD]
+        quantity = AmmoPlugin.quantity
+        quantitInClip = AmmoPlugin.quantityInClip
         if quantity == 0 or quantitInClip == 0:
-            SoundGroups_g_instance.playSound2D(emptyShellsEvent)
+            CORE.send2DSoundEvent(emptyShellsEvent)
             print '[IVM] Player out of ammo'
         if quantity == 5 or quantitInClip == 5:
-            SoundGroups_g_instance.playSound2D(almostOutEvent)
-            print '[IVM] Player Almost out of ammo ', quantity + ' shells left'
+            CORE.send2DSoundEvent(almostOutEvent)
+            print '[IVM] Player Almost out of ammo %s shells left' % (quantity)
     except KeyError:
         LOG_ERROR('Shell is not found.', intCD)
         quantity, quantityInClip = (SHELL_QUANTITY_UNKNOWN,) * 2
