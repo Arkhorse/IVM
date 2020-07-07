@@ -7,16 +7,20 @@ from constants import ARENA_GUI_TYPE
 from Vehicle import Vehicle
 from gui.Scaleform.daapi.view.battle.shared.battle_timers import PreBattleTimer
 from constants import VEHICLE_SETTING
+from gui.Scaleform.daapi.view.lobby.techtree.techtree_dp import _TechTreeDataProvider
+from gui.Scaleform.daapi.view.meta.ModuleInfoMeta import ModuleInfoMeta
+from helpers import dependency
+from skeletons.gui.shared import IItemsCache
+import traceback
 
-from ..mod_ivm import Version
-from utils import overrideMethod, registerEvent
+from Core import overrideMethod, registerEvent, _getRanges, CORE
 from PYmodsCore import PYmodsConfigInterface
 
 class ivmBattle(PYmodsConfigInterface):
 
     def init(self):
         self.ID = 'ivmBattle'
-        self.version = Version
+        self.version = CORE.Version
         self.modsGroups = 'IVM'
         self.data = {'enabled': True, 'questHintEnabled': True, 'notShowBattleMessage': True, 'enableAutoSpeed': True}
         super(ivmBattle, self).init()
@@ -72,10 +76,8 @@ isFrontLine = False
 
 @overrideMethod(FadingMessages, 'showMessage')
 def FadingMessages_showMessage(base, self, key, args=None, extra=None, postfix=''):
-    if not notShowBattleMessage:
-        return
-    # if not isFrontLine:
-    #     return base(self, key, args, extra, postfix)
+    if not notShowBattleMessage or CORE.FrontlineBattleType:
+        return base(self, key, args=None, extra=None, postfix='')
     pass
 
 isWheeledTech = False
@@ -98,3 +100,22 @@ def hideCountdown(self, state, speed):
         return
     if state == 3 and isWheeledTech:
         BigWorld.player().base.vehicle_changeSetting(VEHICLE_SETTING.SIEGE_MODE_ENABLED, True)
+
+# add shooting range in gun info window for SPG/machine guns
+@overrideMethod(ModuleInfoMeta, 'as_setModuleInfoS')
+def ModuleInfoWindow_as_setModuleInfoS(base, self, moduleInfo):
+    try:
+        if moduleInfo['type'] == 'vehicleGun':
+            veh_id = self._ModuleInfoWindow__vehicleDescr.type.compactDescr
+            itemsCache = dependency.instance(IItemsCache)
+            vehicle = itemsCache.items.getItemByCD(veh_id)
+            gun = itemsCache.items.getItemByCD(self.moduleCompactDescr).descriptor
+            turret = self._ModuleInfoWindow__vehicleDescr.turret    # not accurate, but not relevant here
+            (viewRange, shellRadius, artiRadius) = _getRanges(turret, gun, vehicle.nationName, vehicle.type)
+            if vehicle.type == 'SPG':   # arti
+                moduleInfo['parameters']['params'].append({'type': '<h>' + 'shootingRadius' + ' <p>' +'(m)' + '</p></h>', 'value': '<h>' + str(artiRadius) + '</h>'})
+            elif shellRadius < 707:     # not arti, short range weapons
+                moduleInfo['parameters']['params'].append({'type': '<h>' + 'shootingRadius' + ' <p>' + '(m)' + '</p></h>', 'value': '<h>' + str(shellRadius) + '</h>'})
+    except Exception, ex:
+        print(traceback.format_exc())
+    return base(self, moduleInfo)
