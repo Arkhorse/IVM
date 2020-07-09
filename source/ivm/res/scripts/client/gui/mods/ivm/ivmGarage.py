@@ -2,7 +2,13 @@ from .Core import overrideMethod, CORE
 from gui.Scaleform.daapi.view.meta.TankCarouselMeta import TankCarouselMeta
 from gui.Scaleform.daapi.view.lobby.messengerBar.NotificationListButton import NotificationListButton
 
+from gui.Scaleform.daapi.view.lobby.header.LobbyHeader import LobbyHeader
+from gui.Scaleform.daapi.view.lobby.hangar.ammunition_panel import AmmunitionPanel
+from gui.Scaleform.daapi.view.lobby.customization.customization_bottom_panel import CustomizationBottomPanel
+
+from gui.Scaleform.genConsts.HANGAR_ALIASES import HANGAR_ALIASES
 from debug_utils import LOG_CURRENT_EXCEPTION
+from gui.Scaleform.daapi.view.lobby.hangar.Hangar import Hangar
 
 try:
     from PYmodsCore import PYmodsConfigInterface
