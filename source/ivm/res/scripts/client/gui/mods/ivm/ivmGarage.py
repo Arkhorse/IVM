@@ -17,8 +17,16 @@ class ivmGarage(PYmodsConfigInterface):
         self.version = CORE.Version[1]
         self.modsGroups = 'IVM'
         self.data = {
-            'enabled': True, 'carEnabled': True, 'carRows': 2, 'ivmUnanonymizer': False, 'removeBadges': False, 'notificationBlinking': True
-            }
+            'enabled': True, 
+            'carEnabled': True, 
+            'carRows': 2, 
+            'ivmUnanonymizer': False, 
+            'removeBadges': False, 
+            'showTenYearsBanner': True, 
+            'notificationBlinking': True, 
+            'showCustomizationCounter': True,
+            'notificationCounter': True
+            } 
         super(ivmGarage, self).init()
 
     def loadLang(self):
