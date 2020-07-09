@@ -94,6 +94,27 @@ def _NotificationListButton_as_setStateS(base, self, isBlinking, counterValue):
         counterValue = ''
     base(self, isBlinking, counterValue)
 
+# https://gitlab.com/xvm/xvm/-/blob/9322831b9fdd9c74a09587b4206229aee9841ca1/src/xpm/xvm_hangar/counters.py
+@overrideMethod(LobbyHeader, '_LobbyHeader__setCounter')
+def _LobbyHeader__setCounter(base, self, alias, counter=None):
+    if notificationCounter:
+        base(self, alias, counter)
+
+# https://gitlab.com/xvm/xvm/-/blob/9322831b9fdd9c74a09587b4206229aee9841ca1/src/xpm/xvm_hangar/counters.py
+@overrideMethod(AmmunitionPanel, '_AmmunitionPanel__applyCustomizationNewCounter')
+def __applyCustomizationNewCounter(base, self, vehicle):
+    if not showCustomizationCounter:
+        return self.as_setCustomizationBtnCounterS(0)
+    base(self, vehicle)
+
+# https://gitlab.com/xvm/xvm/-/blob/9322831b9fdd9c74a09587b4206229aee9841ca1/src/xpm/xvm_hangar/counters.py
+@overrideMethod(CustomizationBottomPanel, '_CustomizationBottomPanel__setNotificationCounters')
+def __setNotificationCounters(base, self):
+    if not showCustomizationCounter:
+        tabsCounters = []
+        return self.as_setNotificationCountersS({'tabsCounters': tabsCounters, 'switchersCounter': 0})
+    base(self)
+
 
 @overrideMethod(TankCarouselMeta, 'as_rowCountS')
 def ivmCarouselS(base, self, value):
