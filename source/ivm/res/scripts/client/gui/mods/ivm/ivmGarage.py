@@ -90,7 +90,7 @@ def _NotificationListButton_as_setStateS(base, self, isBlinking, counterValue):
     if not notificationBlinking:
         isBlinking = False
         counterValue = ''
-    elif notificationsButtonType:
+    elif notificationBlinking:
         counterValue = ''
     base(self, isBlinking, counterValue)
 
