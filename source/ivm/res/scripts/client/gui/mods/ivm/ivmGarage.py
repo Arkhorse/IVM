@@ -80,6 +80,9 @@ carRows = config.data['carRows']
 ivmUnanonymizer = config.data['ivmUnanonymizer']
 removeBadges = config.data['removeBadges']
 notificationBlinking = config.data['notificationBlinking']
+showTenYearsBanner = config.data['showTenYearsBanner']
+showCustomizationCounter = config.data['showCustomizationCounter']
+notificationCounter = config.data['notificationCounter']
 
 @overrideMethod(NotificationListButton, 'as_setStateS')
 def ivmNotificationButtonState(base, self, isBlinking, counterValue):
