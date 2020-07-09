@@ -83,18 +83,11 @@ def updateHint(base, self):
         return
     base(self)
 
-#oldQuestHint_WG = PreBattleHintPlugin._PreBattleHintPlugin__canDisplayQuestHint
 @overrideMethod(PreBattleHintPlugin, '_PreBattleHintPlugin__canDisplayQuestHint')
-def ivmQuestHint(base, self):
-    #oldQuestHint_WG(self)
-    if not questHintEnabled:
-        print '[IVM] Quest Hint Skipped'
-        return base(self)
-    else:
-        print '[IVM][LOAD] Missions Hint Panel Disabled'
-        return None
-#PreBattleHintPlugin._PreBattleHintPlugin__canDisplayQuestHint = ivmQuestHint
-
+def canDisplayQuestHint(base, self):
+    if questHintEnabled:
+        return False
+    base(self)
 
 @overrideMethod(FadingMessages, 'showMessage')
 def FadingMessages_showMessage(base, self, key, args=None, extra=None, postfix=''):
