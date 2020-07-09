@@ -126,10 +126,10 @@ def ivmCarouselS(base, self, value):
 #TankCarouselMeta.as_rowCountS = ivmCarouselS
 #override(TankCarouselMeta, 'as_rowCountS', ivmCarouselS)
 
+
+# ivmUAVO is based on RaJCel code. Really great guy. Go use his mods: https://wgmods.net/search/?owner=219030
 from gui.battle_results.service import BattleResultsService
 # Pre release testing
-approved = False
-finished = False
 
 class Unanonymizer(object):
     def __init__(self):
@@ -141,7 +141,7 @@ ua = Unanonymizer
 
 @overrideMethod(BattleResultsService, 'getResultsVO')
 def ivmUAVO(base, self, arenaUniqueID):
-    if not ivmUnanonymizer or not approved or not finished:
+    if not ivmUnanonymizer:
         return base(self, arenaUniqueID)
     vo = BattleResultsService.getResultsVO
     try:
