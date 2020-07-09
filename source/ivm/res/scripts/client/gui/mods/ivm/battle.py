@@ -29,15 +29,16 @@ class ivmBattle(PYmodsConfigInterface):
         'questHintEnabled': True, 
         'notShowBattleMessage': True, 
         'enableAutoSpeed': True,
-        'hideTrajectoryView': False
+        'hideTrajectoryView': False,
+        'hideSiegeIndicator': False
         }#, 'setMaxFPS': self.currentFPS}
         super(ivmBattle, self).init()
 
     def loadLang(self):
         if self.lang == 'en':
             self.i18n = {
-                # 'UI_setting_hideTrajectoryView_text': '',
-                # 'UI_setting_hideTrajectoryView_tooltip': ''
+                # 'UI_setting_hideSiegeIndicator_text': '',
+                # 'UI_setting_hideSiegeIndicator_tooltip': ''
                 'name': 'Battle Options',
                 'UI_setting_questHintEnabled_text': 'Disable Mission Popup.',
                 'UI_setting_questHintEnabled_tooltip': 'This will disable the mission popup at the start of battle.',
@@ -46,7 +47,9 @@ class ivmBattle(PYmodsConfigInterface):
                 'UI_setting_enableAutoSpeed_text': 'Start Battle In Speed Mode For Wheeled \"Tanks\".',
                 'UI_setting_enableAutoSpeed_tooltip': 'Always start in the speed mode for wheeled tanks with this.',
                 'UI_setting_hideTrajectoryView_text': 'Hide Arty Trajectory View',
-                'UI_setting_hideTrajectoryView_tooltip': ''
+                'UI_setting_hideTrajectoryView_tooltip': '',
+                'UI_setting_hideSiegeIndicator_text': 'Hide Siegemode Indicator',
+                'UI_setting_hideSiegeIndicator_tooltip': ''
                 #'UI_setting_setMaxFPS_text': 'Max Framerate',
                 #'UI_setting_setMaxFPS_tooltip': 'This will allow you to set your max framerate. This is something alot of people want. The default is 1000, or unlimited.'
             }
@@ -55,7 +58,7 @@ class ivmBattle(PYmodsConfigInterface):
         return {
             'modDisplayName': self.i18n['name'],
             'enabled': self.data['enabled'],
-            'column1': [self.tb.createControl('questHintEnabled'), self.tb.createControl('notShowBattleMessage'), self.tb.createControl('hideTrajectoryView')],
+            'column1': [self.tb.createControl('questHintEnabled'), self.tb.createControl('notShowBattleMessage'), self.tb.createControl('hideTrajectoryView'), self.tb.createControl('hideSiegeIndicator')],
             'column2': [self.tb.createControl('enableAutoSpeed')]#, self.tb.createControl('setMaxFPS', self.tb.types.TextInput, 80)]
         }
 
@@ -64,12 +67,19 @@ questHintEnabled = config.data['questHintEnabled']
 notShowBattleMessage = config.data['notShowBattleMessage']
 enableAutoSpeed = config.data['enableAutoSpeed']
 hideTrajectoryView = config.data['hideTrajectoryView']
+hideSiegeIndicator = config.data['hideSiegeIndicator']
 # setMaxFPS = config.data['setMaxFPS']
 
 # https://gitlab.com/xvm/xvm/-/blob/master/src/xpm/xvm_battle/battle.py
 @overrideMethod(TrajectoryViewHintPlugin, '_TrajectoryViewHintPlugin__addHint')
 def addHint(base, self):
     if hideTrajectoryView:
+        return
+    base(self)
+
+@overrideMethod(SiegeIndicatorHintPlugin, '_SiegeIndicatorHintPlugin__updateHint')
+def updateHint(base, self):
+    if hideSiegeIndicator:
         return
     base(self)
 
