@@ -1,4 +1,4 @@
-from utils import CORE, overrideMethod
+from .Core import CORE, overrideMethod
 #####################################################################
 # imports
 
