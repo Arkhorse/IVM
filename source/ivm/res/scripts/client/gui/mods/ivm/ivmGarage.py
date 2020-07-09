@@ -65,8 +65,8 @@ class ivmGarage(PYmodsConfigInterface):
         return {
             'modDisplayName': self.i18n['name'],
             'enabled': self.data['enabled'],
-            'column1': [self.tb.createControl('carEnabled'), self.tb.createControl('ivmUnanonymizer'), self.tb.createControl('notificationBlinking')],
-            'column2': [self.tb.createSlider('carRows', vMin=0, vMax=12, value=2, formatStr='{{value}}', width=200, step=1, empty=False), self.tb.createControl('removeBadges')]
+            'column1': [self.tb.createLabel('garageLabel1'), self.tb.createControl('carEnabled'), self.tb.createControl('ivmUnanonymizer'), self.tb.createControl('notificationBlinking'), self.tb.createControl('notificationCounter')],
+            'column2': [self.tb.createSlider('carRows', vMin=0, vMax=12, value=2, formatStr='{{value}}', width=200, step=1, empty=False), self.tb.createControl('removeBadges'), self.tb.createControl('showTenYearsBanner'), self.tb.createControl('showCustomizationCounter')]
         }
 
 config = ivmGarage()
