@@ -69,6 +69,11 @@ class ivmGarage(PYmodsConfigInterface):
             'column2': [self.tb.createSlider('carRows', vMin=0, vMax=12, value=2, formatStr='{{value}}', width=200, step=1, empty=False), self.tb.createControl('removeBadges'), self.tb.createControl('showTenYearsBanner'), self.tb.createControl('showCustomizationCounter')]
         }
 
+    def onApplySettings(self, settings):
+        super(ivmGarage, self).onApplySettings(settings)
+        settings = self.data
+        self.displayed = not settings
+
 config = ivmGarage()
 carEnabled = config.data['carEnabled']
 carRows = config.data['carRows']
