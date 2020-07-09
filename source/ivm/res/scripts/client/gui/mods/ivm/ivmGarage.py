@@ -160,3 +160,12 @@ def ivmUAVO(base, self, arenaUniqueID):
         CORE.addSystemMessage_Error('IVM Failed on ivmUAVO\nThis is the Unanonymizer')
         print CORE.ModIDShort, ' ivmUAVO Issue', LOG_CURRENT_EXCEPTION
     return vo
+
+# hide display banner - World of Tanks' 10th Anniversary
+@overrideMethod(Hangar, '_Hangar__updateTenYearsCountdownEntryPointVisibility')
+def updateTenYearsCountdownEntryPointVisibility(base, self):
+    if not showTenYearsBanner:
+        self.as_updateEventEntryPointS(HANGAR_ALIASES.TEN_YEARS_COUNTDOWN_ENTRY_POINT_INJECT, False)
+        return
+    base(self)
+
