@@ -99,7 +99,6 @@ def canDisplayHelpHint(base, self, typeDescriptor):
         return False
     base(self, typeDescriptor)
 
-
 @overrideMethod(FadingMessages, 'showMessage')
 def FadingMessages_showMessage(base, self, key, args=None, extra=None, postfix=''):
     if not notShowBattleMessage or CORE.FrontlineBattleType:
