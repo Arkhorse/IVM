@@ -4,9 +4,6 @@
 			"path": "ivm\\res\\scripts\\client\\gui\\mods"
 		},
 		{
-			"path": "F:\\Mods\\WG source\\scripts\\source\\res\\scripts\\client"
-		},
-		{
 			"path": "..\\..\\..\\..\\PYmods\\source\\scripts\\client"
 		},
 		{
@@ -14,6 +11,12 @@
 		},
 		{
 			"path": "ivm\\res\\scripts\\client\\gui\\mods\\ivm"
+		},
+		{
+			"path": "..\\..\\..\\..\\Relhax\\WorldOfTanks-Decompiled\\source\\res\\scripts\\client"
+		},
+		{
+			"path": "..\\Publish"
 		}
 	],
 	"settings": {
