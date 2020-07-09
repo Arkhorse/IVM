@@ -6,7 +6,7 @@ from gui.Scaleform.daapi.view.battle.shared.crosshair.plugins import AmmoPlugin
 from debug_utils import LOG_CURRENT_EXCEPTION
 import BigWorld
 
-from Core import overrideMethod, CORE
+from .Core import overrideMethod, CORE
 try:
     from PYmodsCore import PYmodsConfigInterface
 except ImportError:
