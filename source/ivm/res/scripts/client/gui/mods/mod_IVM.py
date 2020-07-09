@@ -41,12 +41,12 @@ except ImportError:
 from time import sleep
 
 if not garage or not sound or not battle:
-    CORE.addSystemMessage_Error('IVM Failed to load')
+    #CORE.addSystemMessage_Error('IVM Failed to load')
     print CORE.ModIDShort, 'Modules Not Found, Redownload Mod @ %s' % (CORE.downloadURL)
 else:
-    CORE.addSystemMessage_GameGreeting('[IVM] Loaded. Have fun. Don\'t get artied')
+    #CORE.addSystemMessage_GameGreeting('[IVM] Loaded. Have fun. Don\'t get artied')
     print CORE.ModIDShort, 'Loaded', 'Version', CORE.Version[1]
 
-if CORE.debug:
-    CORE.addSystemMessage_GameGreeting('Debug Info:\nGarage = %s\nSound= %s\nBattle = %s' % (garage, sound, battle))
+#if CORE.debug:
+    #CORE.addSystemMessage_GameGreeting('Debug Info:\nGarage = %s\nSound= %s\nBattle = %s' % (garage, sound, battle))
     
