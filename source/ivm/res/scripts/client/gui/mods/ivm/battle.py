@@ -12,8 +12,9 @@ from gui.Scaleform.daapi.view.meta.ModuleInfoMeta import ModuleInfoMeta
 from helpers import dependency
 from skeletons.gui.shared import IItemsCache
 import traceback
+from xml.etree import ElementTree as ET
 
-from Core import overrideMethod, registerEvent, _getRanges, CORE
+from .Core import overrideMethod, registerEvent, _getRanges, CORE
 from PYmodsCore import PYmodsConfigInterface
 
 class ivmBattle(PYmodsConfigInterface):
@@ -22,7 +23,8 @@ class ivmBattle(PYmodsConfigInterface):
         self.ID = 'ivmBattle'
         self.version = CORE.Version
         self.modsGroups = 'IVM'
-        self.data = {'enabled': True, 'questHintEnabled': True, 'notShowBattleMessage': True, 'enableAutoSpeed': True}
+        self.currentFPS = CORE.MaxFPS
+        self.data = {'enabled': True, 'questHintEnabled': True, 'notShowBattleMessage': True, 'enableAutoSpeed': True}#, 'setMaxFPS': self.currentFPS}
         super(ivmBattle, self).init()
 
     def loadLang(self):
@@ -36,7 +38,9 @@ class ivmBattle(PYmodsConfigInterface):
                 'UI_setting_notShowBattleMessage_text': 'Disable Destroyed Tanks Message.',
                 'UI_setting_notShowBattleMessage_tooltip': 'This will disable the messages for destroyed tanks above the minimap.',
                 'UI_setting_enableAutoSpeed_text': 'Start Battle In Speed Mode For Wheeled \"Tanks\".',
-                'UI_setting_enableAutoSpeed_tooltip': 'Always start in the speed mode for wheeled tanks with this.'
+                'UI_setting_enableAutoSpeed_tooltip': 'Always start in the speed mode for wheeled tanks with this.',
+                #'UI_setting_setMaxFPS_text': 'Max Framerate',
+                #'UI_setting_setMaxFPS_tooltip': 'This will allow you to set your max framerate. This is something alot of people want. The default is 1000, or unlimited.'
             }
     
     def createTemplate(self):
@@ -44,13 +48,14 @@ class ivmBattle(PYmodsConfigInterface):
             'modDisplayName': self.i18n['name'],
             'enabled': self.data['enabled'],
             'column1': [self.tb.createControl('questHintEnabled'), self.tb.createControl('notShowBattleMessage')],
-            'column2': [self.tb.createControl('enableAutoSpeed')]
+            'column2': [self.tb.createControl('enableAutoSpeed')]#, self.tb.createControl('setMaxFPS', self.tb.types.TextInput, 80)]
         }
 
 config = ivmBattle()
 questHintEnabled = config.data['questHintEnabled']
 notShowBattleMessage = config.data['notShowBattleMessage']
 enableAutoSpeed = config.data['enableAutoSpeed']
+# setMaxFPS = config.data['setMaxFPS']
 
 #oldQuestHint_WG = PreBattleHintPlugin._PreBattleHintPlugin__canDisplayQuestHint
 @overrideMethod(PreBattleHintPlugin, '_PreBattleHintPlugin__canDisplayQuestHint')
@@ -63,15 +68,6 @@ def ivmQuestHint(base, self):
         print '[IVM][LOAD] Missions Hint Panel Disabled'
         return None
 #PreBattleHintPlugin._PreBattleHintPlugin__canDisplayQuestHint = ivmQuestHint
-
-
-isFrontLine = False
-
-# @registerEvent(Vehicle, 'onEnterWorld')
-# def Vehicle_onEnterWorld(self, prereqs):
-#     global isFrontLine
-#     if self.isPlayerVehicle:
-#         isFrontLine = BigWorld.player().arenaGuiType == ARENA_GUI_TYPE.EPIC_BATTLE
 
 
 @overrideMethod(FadingMessages, 'showMessage')
@@ -119,3 +115,15 @@ def ModuleInfoWindow_as_setModuleInfoS(base, self, moduleInfo):
     except Exception, ex:
         print(traceback.format_exc())
     return base(self, moduleInfo)
+
+# def ivmMaxFPS():
+    #tree = ET.parse(CORE.engineXML)
+    #root = tree.getroot()
+#
+#    if CORE.debug:
+#        print '%s setting maxFPS to %s' % (CORE.ModIDShort, setMaxFPS)
+#
+#    tree.find('renderer/maxFrameRate').text = setMaxFPS
+#    tree.write(CORE.engineXML)
+
+#ivmMaxFPS()
