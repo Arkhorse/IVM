@@ -19,7 +19,7 @@ class Core(object):
         self.discordInvite          = 'https://discordapp.com/invite/58fdPvK'
         self.Author                 = 'The Illusion'
         self.Credits                = 'RaJCel'
-        self.Version                = ['Rel 0 ', 'Patch 0.04']
+        self.Version                = ['Rel 0 ', 'Patch 0.05']
         self.Status                 = 'Dev'
         self.debug                  = False
         self.ModIDInternal          = 'mod_ivm'
@@ -30,7 +30,7 @@ class Core(object):
         self.domainVersion          = '1.9.1'
         self.domainZip              = 'Dependency_IVM_Main_v0.03_1.9.1.1_2020-07-02.zip'
         self.downloadURL            = os.path.join(self.domain, self.domainVersion, self.domainZip)
-        self.buildVersionClient     = '1.9.1.1'
+        self.buildVersionClient     = '1.9.1.2'
         self.FrontlineBattleType    = ARENA_BONUS_TYPE.EPIC_BATTLE
         self.RandomBattleType       = ARENA_BONUS_TYPE.REGULAR
         self.gameVersion            = ElementTree.parse('./paths.xml').find('Paths').find('Path').text.split("/")[-1]

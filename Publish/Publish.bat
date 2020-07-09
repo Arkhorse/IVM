@@ -8,7 +8,7 @@ set "Dependencies=E:\Python\IVM\IVM\Dependencies"
 set "publishDir=E:\Python\IVM\IVM\Publish"
 rem possible states: Development, Beta, Released
 set "ivmStatus=Development"
-set "ivmVersion=0.04"
+set "ivmVersion=0.05"
 
 rem Remove old files
 
