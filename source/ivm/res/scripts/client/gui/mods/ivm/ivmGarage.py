@@ -35,8 +35,10 @@ class ivmGarage(PYmodsConfigInterface):
                 # 'UI_setting__text': '',
                 # 'UI_setting__tooltip': ''
                 'name': 'Garage Options',
+                'UI_setting_garageLabel1_text': 'Note: All settings require a full game reload to apply',
+                'UI_setting_garageLabel1_tooltip': 'This is due to coding limitations at this time.',
                 'UI_setting_carEnabled_text': 'Enable the carousel rows option',
-                'UI_settings_carEnabled_tooltip': '',
+                'UI_setting_carEnabled_tooltip': '',
                 'UI_setting_carRows_text': 'Choose how many carousel rows you want',
                 'UI_setting_carRows_tooltip': 'To apply this, you MUST reload the game.',
                 'UI_setting_ivmUnanonymizer_text': 'Enable Unanonymizer',
@@ -44,7 +46,13 @@ class ivmGarage(PYmodsConfigInterface):
                 'UI_setting_removeBadges_text': 'Remove Badges',
                 'UI_setting_removeBadges_tooltip': 'This requires Unanonymizer.',
                 'UI_setting_notificationBlinking_text': 'Notification Status',
-                'UI_setting_notificationBlinking_tooltip': 'Uncheck this if you dont want blinking notifications'
+                'UI_setting_notificationBlinking_tooltip': 'Turn this to off if you dont want blinking notifications',
+                'UI_setting_showTenYearsBanner_text': 'Show 10 Years Banner',
+                'UI_setting_showTenYearsBanner_tooltip': 'Annoyed by the 10 years banner? Turn it off!',
+                'UI_setting_notificationCounter_text': 'Enable Notification Counter Options',
+                'UI_setting_notificationCounter_tooltip': '',
+                'UI_setting_showCustomizationCounter_text': 'Show Notification Counters',
+                'UI_setting_showCustomizationCounter_tooltip': 'Show notifications counters in some areas and on the button \"Exterior\".'
                 }
 
     def createTemplate(self):
