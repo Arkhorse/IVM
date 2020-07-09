@@ -84,14 +84,16 @@ showTenYearsBanner = config.data['showTenYearsBanner']
 showCustomizationCounter = config.data['showCustomizationCounter']
 notificationCounter = config.data['notificationCounter']
 
+# https://gitlab.com/xvm/xvm/-/blob/master/src/xpm/xvm_hangar/svcmsg.py
 @overrideMethod(NotificationListButton, 'as_setStateS')
-def ivmNotificationButtonState(base, self, isBlinking, counterValue):
-    # https://gitlab.com/xvm/xvm/-/blob/master/src/xpm/xvm_hangar/svcmsg.py
+def _NotificationListButton_as_setStateS(base, self, isBlinking, counterValue):
     if not notificationBlinking:
         isBlinking = False
         counterValue = ''
-    else:
-        base(self, isBlinking, counterValue)
+    elif notificationsButtonType:
+        counterValue = ''
+    base(self, isBlinking, counterValue)
+
 
 @overrideMethod(TankCarouselMeta, 'as_rowCountS')
 def ivmCarouselS(base, self, value):
