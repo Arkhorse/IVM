@@ -1,0 +1,6 @@
+﻿{
+    "enableButtonTooltip": "{HEADER}Вкл/Выкл{/HEADER}{BODY}Включить/выключить данный мод{/BODY}",
+    "modsListApiDescription": "Включение и настройка модов от <font color='#DD7700'><b>Polyacov_Yury</b></font>",
+    "modsListApiName": "Настройки модов от PY",
+    "windowTitle": "Настройки модов от Polyacov_Yury"
+}
