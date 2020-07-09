@@ -51,6 +51,11 @@ class ivmSound(PYmodsConfigInterface):
             'column2': [self.tb.createLabel('fireEvent'), self.tb.createLabel('stunEvent'), self.tb.createLabel('emptyShellsEvent'), self.tb.createLabel('almostOutEvent')]
         }
 
+    def onApplySettings(self, settings):
+        super(ivmSound, self).onApplySettings(settings)
+        settings = self.data
+        self.displayed = not settings
+
 config = ivmSound()
 fireEnabled = config.data['fireEnabled']
 fireEvent = config.data['fireEvent']
