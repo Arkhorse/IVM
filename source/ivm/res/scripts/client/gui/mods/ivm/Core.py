@@ -4,6 +4,8 @@ from gui import SystemMessages
 from constants import ARENA_BONUS_TYPE
 from account import PlayerAccount
 from helpers.statistics import StatisticsCollector
+# from helpers.statistics.StatisticsCollector import __onHangarSpaceLoaded
+from helpers.statistics import HANGAR_LOADING_STATE
 from SoundGroups import g_instance as SoundInstance
 from gun_rotation_shared import calcPitchLimitsFromDesc
 # Global Imports
@@ -19,7 +21,7 @@ class Core(object):
         self.Credits                = 'RaJCel'
         self.Version                = ['Rel 0 ', 'Patch 0.04']
         self.Status                 = 'Dev'
-        self.debug                  = True
+        self.debug                  = False
         self.ModIDInternal          = 'mod_ivm'
         self.ModIDShort             = 'IVM'
         self.ModIDLong              = 'Improved Visuals and Sounds'
@@ -33,8 +35,44 @@ class Core(object):
         self.RandomBattleType       = ARENA_BONUS_TYPE.REGULAR
         self.gameVersion            = ElementTree.parse('./paths.xml').find('Paths').find('Path').text.split("/")[-1]
         self.appdataPath            = unicode(wg_getPreferencesFilePath()).replace('/preferences.xml', '')
+        self.engineXML              = './res_mods/%s/engine_config.xml' % (self.gameVersion)
+        self.MaxFPS                 = ElementTree.parse(self.engineXML).find('renderer').find('maxFrameRate')
         self._VEHICLE_TYPE_XML_PATH = 'scripts/item_defs/vehicles/'
         super(Core, self).__init__()
+
+    #def onHangarSpaceLoaded(self):
+        #return __hangarLoaded
+
+    def openWebBrowser(self, url):
+        BigWorld.wg_openWebBrowser(url)
+
+    def getAccountPlayerName(self):
+        return getattr(BigWorld.player(), 'name', None)
+
+    def getCurrentHangerState(self, state):
+        """
+        LOGIN = 0
+        CONNECTED = 1
+        SHOW_GUI = 2
+        QUESTS_SYNC = 3
+        USER_SERVER_SETTINGS_SYNC = 4
+        START_LOADING_SPACE = 5
+        START_LOADING_VEHICLE = 6
+        FINISH_LOADING_VEHICLE = 7
+        FINISH_LOADING_SPACE = 8
+        HANGAR_UI_READY = 9
+        TRAINING_UI_READY = 10
+        HANGAR_READY = 11
+        START_LOADING_TUTORIAL = 12
+        FINISH_LOADING_TUTORIAL = 13
+        DISCONNECTED = 14
+        COUNT = 15
+        """
+        # HANGAR_LOADING_STATE
+        if state < 0 or state > HANGAR_LOADING_STATE.COUNT:
+            print '%s Unknown Hanger State {0}'.format(state)
+            stateCondition = 'Unknown'
+        return state
 
     def joinPaths(self, a):
         path = a
@@ -51,11 +89,11 @@ class Core(object):
         print 'Loading mod: The Illusion.%s%s | %s | Support: %s' % (modCodeName, spacer, buildDate, self.discordInvite)
 
     def addSystemMessage_GameGreeting(self, message):
-        if StatisticsCollector.__onHangarSpaceLoaded.__hangarLoaded:
+        #if StatisticsCollector.__onHangarSpaceLoaded.__hangarLoaded:
             SystemMessages.pushMessage(message, type = SystemMessages.SM_TYPE.GameGreeting)
 
     def addSystemMessage_Error(self, message):
-        if StatisticsCollector.__onHangarSpaceLoaded.__hangarLoaded:
+        #if StatisticsCollector.__onHangarSpaceLoaded.__hangarLoaded:
             SystemMessages.pushMessage(message, type = SystemMessages.SM_TYPE.Error)
 
     def applyMacros(self, msg, macrosNb, macros, values):
