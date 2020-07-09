@@ -1,6 +1,4 @@
 import BigWorld
-# Disable Starting hint
-from gui.Scaleform.daapi.view.battle.shared.hint_panel.plugins import PreBattleHintPlugin
 from gui.Scaleform.daapi.view.battle.shared.hint_panel.plugins import TrajectoryViewHintPlugin, SiegeIndicatorHintPlugin, PreBattleHintPlugin
 # Disable destroyed messages imports
 from gui.Scaleform.daapi.view.battle.shared.messages.fading_messages import FadingMessages
