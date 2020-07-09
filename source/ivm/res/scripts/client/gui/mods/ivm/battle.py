@@ -30,15 +30,16 @@ class ivmBattle(PYmodsConfigInterface):
         'notShowBattleMessage': True, 
         'enableAutoSpeed': True,
         'hideTrajectoryView': False,
-        'hideSiegeIndicator': False
+        'hideSiegeIndicator': False,
+        'hideHelpScreen': False
         }#, 'setMaxFPS': self.currentFPS}
         super(ivmBattle, self).init()
 
     def loadLang(self):
         if self.lang == 'en':
             self.i18n = {
-                # 'UI_setting_hideSiegeIndicator_text': '',
-                # 'UI_setting_hideSiegeIndicator_tooltip': ''
+                # 'UI_setting_hideHelpScreen_text': '',
+                # 'UI_setting_hideHelpScreen_tooltip': ''
                 'name': 'Battle Options',
                 'UI_setting_questHintEnabled_text': 'Disable Mission Popup.',
                 'UI_setting_questHintEnabled_tooltip': 'This will disable the mission popup at the start of battle.',
@@ -49,7 +50,9 @@ class ivmBattle(PYmodsConfigInterface):
                 'UI_setting_hideTrajectoryView_text': 'Hide Arty Trajectory View',
                 'UI_setting_hideTrajectoryView_tooltip': '',
                 'UI_setting_hideSiegeIndicator_text': 'Hide Siegemode Indicator',
-                'UI_setting_hideSiegeIndicator_tooltip': ''
+                'UI_setting_hideSiegeIndicator_tooltip': '',
+                'UI_setting_hideHelpScreen_text': 'Hide Help Screen',
+                'UI_setting_hideHelpScreen_tooltip': ''
                 #'UI_setting_setMaxFPS_text': 'Max Framerate',
                 #'UI_setting_setMaxFPS_tooltip': 'This will allow you to set your max framerate. This is something alot of people want. The default is 1000, or unlimited.'
             }
@@ -58,7 +61,7 @@ class ivmBattle(PYmodsConfigInterface):
         return {
             'modDisplayName': self.i18n['name'],
             'enabled': self.data['enabled'],
-            'column1': [self.tb.createControl('questHintEnabled'), self.tb.createControl('notShowBattleMessage'), self.tb.createControl('hideTrajectoryView'), self.tb.createControl('hideSiegeIndicator')],
+            'column1': [self.tb.createControl('questHintEnabled'), self.tb.createControl('notShowBattleMessage'), self.tb.createControl('hideTrajectoryView'), self.tb.createControl('hideSiegeIndicator'), self.tb.createControl('hideHelpScreen')],
             'column2': [self.tb.createControl('enableAutoSpeed')]#, self.tb.createControl('setMaxFPS', self.tb.types.TextInput, 80)]
         }
 
@@ -68,6 +71,7 @@ notShowBattleMessage = config.data['notShowBattleMessage']
 enableAutoSpeed = config.data['enableAutoSpeed']
 hideTrajectoryView = config.data['hideTrajectoryView']
 hideSiegeIndicator = config.data['hideSiegeIndicator']
+hideHelpScreen = config.data['hideHelpScreen']
 # setMaxFPS = config.data['setMaxFPS']
 
 # https://gitlab.com/xvm/xvm/-/blob/master/src/xpm/xvm_battle/battle.py
@@ -88,6 +92,13 @@ def canDisplayQuestHint(base, self):
     if questHintEnabled:
         return False
     base(self)
+
+@overrideMethod(PreBattleHintPlugin, '_PreBattleHintPlugin__canDisplayHelpHint')
+def canDisplayHelpHint(base, self, typeDescriptor):
+    if hideHelpScreen:
+        return False
+    base(self, typeDescriptor)
+
 
 @overrideMethod(FadingMessages, 'showMessage')
 def FadingMessages_showMessage(base, self, key, args=None, extra=None, postfix=''):
