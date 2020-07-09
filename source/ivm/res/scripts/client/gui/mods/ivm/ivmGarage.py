@@ -119,9 +119,11 @@ def __setNotificationCounters(base, self):
 @overrideMethod(TankCarouselMeta, 'as_rowCountS')
 def ivmCarouselS(base, self, value):
     if not carEnabled:
-        print '[IVM] Carousels Not Enabled'
+        if CORE.debug:
+            print '[IVM] Carousels Not Enabled'
         return base(self, value)
-    print '[IVM] Carousels Enabled with %s Rows' % (carRows)
+    if CORE.debug:
+        print '[IVM] Carousels Enabled with %s Rows' % (carRows)
     return self.flashObject.as_rowCount(carRows) if self._isDAAPIInited() else None
 #TankCarouselMeta.as_rowCountS = ivmCarouselS
 #override(TankCarouselMeta, 'as_rowCountS', ivmCarouselS)
