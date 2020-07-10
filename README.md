@@ -8,14 +8,11 @@
 
 All requirements will be included in each release.
 
-## Features:
-- More Carousel Rows
-- Mission Hint Disable
-- Stun Sound (Can be altered by modders)
-- Fire Sound (Can be altered by modders)
-- spoter's Repair (Legal Version)
-
 ## Change Log:
+- 0.04:
+    - Fixed @overrideMethod
+    - Add alot more garage options
+
 - 0.03:
     - Added ingame options
     - Changed to an 'overrideMethod', rather than the old sloppy thing
