@@ -1,6 +1,7 @@
 # Game Code
 from BigWorld import player, callback, wg_getPreferencesFilePath
 from gui import SystemMessages
+import constants
 from constants import ARENA_BONUS_TYPE
 from account import PlayerAccount
 from helpers.statistics import StatisticsCollector
@@ -16,12 +17,14 @@ from time import sleep
 
 class Core(object):
     def __init__(self):
+        self.realmCT                = constants.CURRENT_REALM == 'CT'
         self.discordInvite          = 'https://discordapp.com/invite/58fdPvK'
         self.Author                 = 'The Illusion'
         self.Credits                = 'RaJCel'
         self.Version                = ['Rel 0 ', 'Patch 0.05']
         self.Status                 = 'Dev'
         self.debug                  = False
+        self.Tester                 = False
         self.ModIDInternal          = 'mod_ivm'
         self.ModIDShort             = 'IVM'
         self.ModIDLong              = 'Improved Visuals and Sounds'
