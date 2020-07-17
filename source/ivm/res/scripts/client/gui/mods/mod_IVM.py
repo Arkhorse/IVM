@@ -23,6 +23,14 @@ except ImportError:
     pass
 
 try:
+    from .ivm.battle import *
+    print CORE.ModIDShort, 'Battle Module Found'
+except ImportError:
+    battle = False
+    print CORE.ModIDShort, 'Battle Module Not Found'
+    pass
+
+try:
     from .ivm.sound import *
     print CORE.ModIDShort, 'Sound Module Found'
 except ImportError:
@@ -30,13 +38,12 @@ except ImportError:
     print CORE.ModIDShort, 'Sound Module Not Found'
     pass
 
-try:
-    from .ivm.battle import *
-    print CORE.ModIDShort, 'Battle Module Found'
-except ImportError:
-    battle = False
-    print CORE.ModIDShort, 'Battle Module Not Found'
-    pass
+#try:
+#    from .ivm.credits import *
+#    print CORE.ModIDShort, 'Credits Found'
+#except ImportError:
+#    print CORE.ModIDShort, 'Credits Not Found!'
+#    pass
 
 from time import sleep
 
