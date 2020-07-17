@@ -1,5 +1,5 @@
 from .Core import CORE
-import .utils
+import utils
 
 #python
 import os
