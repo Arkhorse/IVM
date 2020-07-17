@@ -28,3 +28,4 @@ source/ivm/res/scripts/client/gui/mods/ivm/utils_old.py
 utils_old.py
 Required API's
 Private
+FPSLIMITER
