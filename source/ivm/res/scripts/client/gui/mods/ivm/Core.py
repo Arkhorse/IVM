@@ -22,6 +22,7 @@ class Core(object):
         self.Author                 = 'The Illusion'
         self.Credits                = 'RaJCel'
         self.Version                = ['Rel 0 ', 'Patch 0.05']
+        self.updateCodeName         = 'The Fly Swatter'
         self.Status                 = 'Dev'
         self.debug                  = False
         self.Tester                 = False
