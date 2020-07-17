@@ -41,6 +41,8 @@ class Core(object):
         self.engineXML              = './res_mods/%s/engine_config.xml' % (self.gameVersion)
         self.MaxFPS                 = ElementTree.parse(self.engineXML).find('renderer').find('maxFrameRate')
         self._VEHICLE_TYPE_XML_PATH = 'scripts/item_defs/vehicles/'
+        self.translationCodes       = ['en', 'es', 'ru']
+        self.en                     = '.mods/configs/ivm/en.json'
         super(Core, self).__init__()
 
     #def onHangarSpaceLoaded(self):
