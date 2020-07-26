@@ -37,13 +37,13 @@ class ivmSound(PYmodsConfigInterface):
                 'UI_setting_stunEnabled_text': 'Enable Stun Sound',
                 'UI_setting_emptyShellsEnabled_text': 'Enable Shell Alert Sounds',
                 'UI_setting_fireEvent_text': 'Fire Event',
-                'UI_setting_fireEvent_tooltip' 'Dont change this unless you know what you are doing!',
+                'UI_setting_fireEvent_tooltip': 'Dont change this unless you know what you are doing!',
                 'UI_setting_stunEvent_text': 'Stun Event',
-                'UI_setting_stunEvent_tooltip' 'Dont change this unless you know what you are doing!',
+                'UI_setting_stunEvent_tooltip': 'Dont change this unless you know what you are doing!',
                 'UI_setting_almostOutEvent_text': 'Almost Out Event',
-                'UI_setting_almostOutEvent_tooltip' 'Dont change this unless you know what you are doing!',
+                'UI_setting_almostOutEvent_tooltip': 'Dont change this unless you know what you are doing!',
                 'UI_setting_emptyShellsEvent_text': 'Empty Shells Event',
-                'UI_setting_emptyShellsEvent_tooltip' 'Dont change this unless you know what you are doing!',
+                'UI_setting_emptyShellsEvent_tooltip': 'Dont change this unless you know what you are doing!',
             }
     
     def createTemplate(self):
