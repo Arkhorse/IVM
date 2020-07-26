@@ -23,10 +23,10 @@ def _CustomFilesCache__onReadLocalFile(base, self, url, showImmediately):
         except Exception:
             print(traceback.format_exc())
 
-@overrideMethod(debug_utils, '_doLog')
-def _doLog(base, category, msg, *args, **kwargs):
-    if CORE.realmCT:
-        if category == 'DEBUG':
-            if msg == '_updateToLatestVersion':
-                return
-    base(category, msg, args, kwargs)
+#@overrideMethod(debug_utils, '_doLog')
+#def _doLog(base, category, msg, *args, **kwargs):
+    #if CORE.realmCT:
+        #if category == 'DEBUG':
+            #if msg == '_updateToLatestVersion':
+                #return
+    #base(category, msg, args, kwargs)
