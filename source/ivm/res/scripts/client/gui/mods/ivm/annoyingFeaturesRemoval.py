@@ -20,6 +20,11 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
             'hideCombatIntel': False,
             'hideCombatIntelCount': False,
             'hidePiggyBankWindow': False,
+            'hideRankedResults': False,
+            'hideSessionStatsButton': False,
+            'hideBattleCount': False,
+            'hideDailyQuestWidget': False,
+            'hideTenYearsBanner': False,
             'Translator': 'The Illusion'
         }
         super(annoyingFeatureRemoval, self).init()
@@ -51,7 +56,28 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
                 'UI_setting_hideReferalButton_text': 'Hide Referal Button',
                 'UI_setting_hideReferalButton_tooltip': '',
                 'UI_setting_hideGeneralChat_text': 'Hide General Chat Button',
-                'UI_setting_hideGeneralChat_tooltip': 'Finally! No more idiots!'
+                'UI_setting_hideGeneralChat_tooltip': 'Finally! No more idiots!',
+                'UI_setting_hideRankedResults_text': 'Hide Ranked Results',
+                'UI_setting_hideRankedResults_tooltop': '',
+                'UI_setting_sessionStats_text': 'Session Stats Options',
+                'UI_setting_sessionStats_tooltip': '',
+                'UI_setting_hideSessionStatsButton_text': 'Hide Button',
+                'UI_setting_hideSessionStatsButton_tooltip': '',
+                'UI_setting_hideBattleCount_text': 'Hide Battle Count',
+                'UI_setting_hideBattleCount_tooltip': '',
+                'UI_setting_hideDailyQuestWidget_text': 'Hide Daily Quest',
+                'UI_setting_hideDailyQuestWidget_tooltip': '',
+                'UI_setting_hideTenYearsBanner_text': 'Hide 10 Years Banner',
+                'UI_setting_hideTenYearsBanner_tooltip': '',
+                'UI_setting_hidePromoVehicle_text': 'Hide Promo Vehicle',
+                'UI_setting_hidePromoVehicle_tooltip': '',
+                'UI_setting_hideCombatIntel_text': 'Hide Adverts',
+                'UI_setting_hideCombatIntel_tooltip': '',
+                'UI_setting_hideCombatIntelCount_text': 'Hide Advert Count',
+                'UI_setting_hideCombatIntelCount_tooltip': '',
+                'UI_setting_hidePiggyBankWindow_text': 'Hide Piggy Bank',
+                'UI_setting_hidePiggyBankWindow_tooltip': 'Why would you want to do this? Free money...',
+                'UI_setting_tempOptions_text': 'Temporary Options'
             }
         if self.lang == 'ru':
             self.i18n = {
@@ -112,7 +138,12 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
                 self.tb.createControl('hideQuestHint'), 
                 self.tb.createControl('hideHelpScreen'),
                 self.tb.createControl('hideSiegeIndicator'), 
-                self.tb.createControl('notShowBattleMessage')
+                self.tb.createControl('notShowBattleMessage'),
+                self.tb.createLabel('sessionStats'),
+                self.tb.createControl('hideSessionStatsButton'),
+                self.tb.createControl('hideBattleCount'),
+                self.tb.createLabel('tempOptions'),
+                self.tb.createControl('hideTenYearsBanner')
                 ],
             'column2': [
                 self.tb.createLabel('hangerOptions'),
@@ -121,7 +152,9 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
                 self.tb.createControl('hidePromoVehicle'),
                 self.tb.createControl('hideCombatIntel'),
                 self.tb.createControl('hideCombatIntelCount'),
-                self.tb.createControl('hidePiggyBankWindow')
+                self.tb.createControl('hidePiggyBankWindow'),
+                self.tb.createControl('hideRankedResults'),
+                self.tb.createControl('hideDailyQuestWidget')
                 ]
         }
 
@@ -199,7 +232,7 @@ def _showAward(base, self, ctx):
 
 @overrideMethod(RankedBattlesResults, '_populate')
 def _populate(base, self):
-    if config['enabled'] and not config['showRankedBattleResults']:
+    if c2.data['hideRankedResults'] or c2.data['hideAll']:
         return
     base(self)
 
@@ -213,7 +246,7 @@ def hideSessionStatsHint():
 
 @overrideMethod(MessengerBar, '_MessengerBar__updateSessionStatsBtn')
 def updateSessionStatsBtn(base, self):
-    if config['enabled'] and not config['sessionStatsButton']['showButton']:
+    if c2.data['hideSessionStatsButton'] or c2.data['hideAll']:
         self.as_setSessionStatsButtonVisibleS(False)
         hideSessionStatsHint()
         return
@@ -222,20 +255,20 @@ def updateSessionStatsBtn(base, self):
 
 @overrideMethod(SessionStatsButton, '_SessionStatsButton__updateBatteleCount')
 def updateBatteleCount(base, self):
-    if config['enabled'] and not config['sessionStatsButton']['showBattleCount']:
+    if c2.data['hideBattleCount'] or c2.data['hideAll']:
         return
     base(self)
 
 
 @overrideMethod(DailyQuestWidget, '_DailyQuestWidget__shouldHide')
 def shouldHide(base, self):
-    if config['enabled'] and not config['showDailyQuestWidget']:
+    if c2.data['hideDailyQuestWidget'] or c2.data['hideAll']:
         return True
     base(self)
 
 @overrideMethod(Hangar, '_Hangar__updateTenYearsCountdownEntryPointVisibility')
 def updateTenYearsCountdownEntryPointVisibility(base, self):
-    if config['enabled'] and not config['showTenYearsBanner']:
+    if c2.data['hideTenYearsBanner'] or c2.data['hideAll']:
         self.as_updateEventEntryPointS(HANGAR_ALIASES.TEN_YEARS_COUNTDOWN_ENTRY_POINT_INJECT, False)
         return
     base(self)
