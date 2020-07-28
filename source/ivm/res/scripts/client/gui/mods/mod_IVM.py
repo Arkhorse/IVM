@@ -13,6 +13,7 @@ if CORE.debug:
 garage = True
 sound = True
 battle = True
+annoyingFeatures = True
 
 try:
     from .ivm.ivmGarage import *
@@ -20,6 +21,14 @@ try:
 except ImportError:
     garage = False
     print CORE.ModIDShort, 'Garage Module Not Found'
+    pass
+
+try:
+    from .ivm.battle import *
+    print CORE.ModIDShort, 'Battle Module Found'
+except ImportError:
+    battle = False
+    print CORE.ModIDShort, 'Battle Module Not Found'
     pass
 
 try:
@@ -31,16 +40,23 @@ except ImportError:
     pass
 
 try:
-    from .ivm.battle import *
-    print CORE.ModIDShort, 'Battle Module Found'
+    from .ivm.annoyingFeaturesRemoval import *
+    print CORE.ModIDShort, 'Annoying Features Module Found'
 except ImportError:
-    battle = False
-    print CORE.ModIDShort, 'Battle Module Not Found'
+    annoyingFeatures = False
+    print CORE.ModIDShort, 'Annoying Features Module Not Found'
     pass
+
+#try:
+#    from .ivm.credits import *
+#    print CORE.ModIDShort, 'Credits Found'
+#except ImportError:
+#    print CORE.ModIDShort, 'Credits Not Found!'
+#    pass
 
 from time import sleep
 
-if not garage or not sound or not battle:
+if not garage or not sound or not battle or not annoyingFeatures:
     #CORE.addSystemMessage_Error('IVM Failed to load')
     print CORE.ModIDShort, 'Modules Not Found, Redownload Mod @ %s' % (CORE.downloadURL)
 else:

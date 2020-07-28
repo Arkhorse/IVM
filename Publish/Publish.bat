@@ -8,7 +8,7 @@ set "Dependencies=E:\Python\IVM\IVM\Dependencies"
 set "publishDir=E:\Python\IVM\IVM\Publish"
 rem possible states: Development, Beta, Released
 set "ivmStatus=Development"
-set "ivmVersion=0.04"
+set "ivmVersion=0.05"
 
 rem Remove old files
 
@@ -41,7 +41,7 @@ cd "E:\Python\IVM\IVM\source\ivm"
 
 @echo off
 
-xcopy /v /y "E:\Python\IVM\IVM\source\ivm\com.ivm.wotmod" "%publishDir%\mods\%versiondir%\"
+xcopy /v /y "E:\Python\IVM\IVM\source\ivm\com.ivm.%ivmVersion%.wotmod" "%publishDir%\mods\%versiondir%\"
 xcopy /v /y "E:\Python\IVM\IVM\source\engine_config.xml" "%publishDir%\res_mods\%versiondir%\"
 xcopy /v /y "E:\Python\IVM\IVM\source\audio\IVM.bnk" "%publishDir%\res_mods\%versiondir%\audioww\"
 xcopy /v /y "E:\Python\IVM\IVM\source\audio\audio_mods.xml" "%publishDir%\res_mods\%versiondir%\audioww\"
@@ -53,4 +53,4 @@ cd %publishDir%
 echo "Making Zip"
 @echo off
 7z a -tzip -mx0 IVM.%ivmStatus%.%ivmVersion%.%versiondir%.zip "mods" "res_mods" 
-rem pause
+pause

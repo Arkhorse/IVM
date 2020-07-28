@@ -1,6 +1,7 @@
 # Game Code
 from BigWorld import player, callback, wg_getPreferencesFilePath
 from gui import SystemMessages
+import constants
 from constants import ARENA_BONUS_TYPE
 from account import PlayerAccount
 from helpers.statistics import StatisticsCollector
@@ -16,12 +17,15 @@ from time import sleep
 
 class Core(object):
     def __init__(self):
+        #self.realmCT                = constants.CURRENT_REALM['CT']
         self.discordInvite          = 'https://discordapp.com/invite/58fdPvK'
         self.Author                 = 'The Illusion'
         self.Credits                = 'RaJCel'
-        self.Version                = ['Rel 0 ', 'Patch 0.04']
+        self.Version                = ['Rel 0 ', 'Patch 0.05']
+        self.updateCodeName         = 'The Fly Swatter'
         self.Status                 = 'Dev'
         self.debug                  = False
+        self.Tester                 = False
         self.ModIDInternal          = 'mod_ivm'
         self.ModIDShort             = 'IVM'
         self.ModIDLong              = 'Improved Visuals and Sounds'
@@ -30,7 +34,7 @@ class Core(object):
         self.domainVersion          = '1.9.1'
         self.domainZip              = 'Dependency_IVM_Main_v0.03_1.9.1.1_2020-07-02.zip'
         self.downloadURL            = os.path.join(self.domain, self.domainVersion, self.domainZip)
-        self.buildVersionClient     = '1.9.1.1'
+        self.buildVersionClient     = '1.9.1.2'
         self.FrontlineBattleType    = ARENA_BONUS_TYPE.EPIC_BATTLE
         self.RandomBattleType       = ARENA_BONUS_TYPE.REGULAR
         self.gameVersion            = ElementTree.parse('./paths.xml').find('Paths').find('Path').text.split("/")[-1]
@@ -38,6 +42,8 @@ class Core(object):
         self.engineXML              = './res_mods/%s/engine_config.xml' % (self.gameVersion)
         self.MaxFPS                 = ElementTree.parse(self.engineXML).find('renderer').find('maxFrameRate')
         self._VEHICLE_TYPE_XML_PATH = 'scripts/item_defs/vehicles/'
+        self.translationCodes       = ['en', 'es', 'ru']
+        self.en                     = '.mods/configs/ivm/en.json'
         super(Core, self).__init__()
 
     #def onHangarSpaceLoaded(self):

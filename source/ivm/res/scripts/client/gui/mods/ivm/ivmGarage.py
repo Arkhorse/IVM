@@ -21,7 +21,7 @@ class ivmGarage(PYmodsConfigInterface):
     def init(self):
         self.ID = 'ivmGarage'
         self.version = CORE.Version[1]
-        self.modsGroups = 'IVM'
+        self.carouselRows = 2
         self.data = {
             'enabled': True, 
             'carEnabled': True, 
@@ -58,21 +58,33 @@ class ivmGarage(PYmodsConfigInterface):
                 'UI_setting_notificationCounter_text': 'Enable Notification Counter Options',
                 'UI_setting_notificationCounter_tooltip': '',
                 'UI_setting_showCustomizationCounter_text': 'Show Notification Counters',
-                'UI_setting_showCustomizationCounter_tooltip': 'Show notifications counters in some areas and on the button \"Exterior\".'
+                'UI_setting_showCustomizationCounter_tooltip': 'Show notifications counters in some areas and on the button \"Exterior\".',
+                'UI_setting_updateCodeName_text': '%s Update' % (CORE.updateCodeName),
+                'UI_setting_updateCodeName_tooltip': ''
                 }
 
     def createTemplate(self):
         return {
             'modDisplayName': self.i18n['name'],
             'enabled': self.data['enabled'],
-            'column1': [self.tb.createLabel('garageLabel1'), self.tb.createControl('carEnabled'), self.tb.createControl('ivmUnanonymizer'), self.tb.createControl('notificationBlinking'), self.tb.createControl('notificationCounter')],
-            'column2': [self.tb.createSlider('carRows', vMin=0, vMax=12, value=2, formatStr='{{value}}', width=200, step=1, empty=False), self.tb.createControl('removeBadges'), self.tb.createControl('showTenYearsBanner'), self.tb.createControl('showCustomizationCounter')]
+            'column1': [
+                self.tb.createLabel('updateCodeName'),
+                self.tb.createLabel('garageLabel1'), 
+                self.tb.createControl('carEnabled'), 
+                self.tb.createControl('ivmUnanonymizer'), 
+                self.tb.createControl('notificationBlinking'), 
+                self.tb.createControl('notificationCounter')
+                ],
+            'column2': [
+                self.tb.createSlider('carRows', vMin=0, vMax=12, value=2, formatStr='{{value}}', width=200, step=1, empty=False), 
+                self.tb.createControl('removeBadges'),  
+                self.tb.createControl('showCustomizationCounter')
+                ]
         }
 
     def onApplySettings(self, settings):
         super(ivmGarage, self).onApplySettings(settings)
-        settings = self.data
-        self.displayed = not settings
+        self.carouselRows = self.data['carRows']
 
 config = ivmGarage()
 carEnabled = config.data['carEnabled']
@@ -90,7 +102,7 @@ def _NotificationListButton_as_setStateS(base, self, isBlinking, counterValue):
     if not notificationBlinking:
         isBlinking = False
         counterValue = ''
-    elif notificationsButtonType:
+    elif notificationBlinking:
         counterValue = ''
     base(self, isBlinking, counterValue)
 
@@ -119,9 +131,11 @@ def __setNotificationCounters(base, self):
 @overrideMethod(TankCarouselMeta, 'as_rowCountS')
 def ivmCarouselS(base, self, value):
     if not carEnabled:
-        print '[IVM] Carousels Not Enabled'
+        if CORE.debug:
+            print '[IVM] Carousels Not Enabled'
         return base(self, value)
-    print '[IVM] Carousels Enabled with %s Rows' % (carRows)
+    if CORE.debug:
+        print '[IVM] Carousels Enabled with %s Rows' % (carRows)
     return self.flashObject.as_rowCount(carRows) if self._isDAAPIInited() else None
 #TankCarouselMeta.as_rowCountS = ivmCarouselS
 #override(TankCarouselMeta, 'as_rowCountS', ivmCarouselS)
@@ -160,12 +174,4 @@ def ivmUAVO(base, self, arenaUniqueID):
         CORE.addSystemMessage_Error('IVM Failed on ivmUAVO\nThis is the Unanonymizer')
         print CORE.ModIDShort, ' ivmUAVO Issue', LOG_CURRENT_EXCEPTION
     return vo
-
-# hide display banner - World of Tanks' 10th Anniversary
-@overrideMethod(Hangar, '_Hangar__updateTenYearsCountdownEntryPointVisibility')
-def updateTenYearsCountdownEntryPointVisibility(base, self):
-    if not showTenYearsBanner:
-        self.as_updateEventEntryPointS(HANGAR_ALIASES.TEN_YEARS_COUNTDOWN_ENTRY_POINT_INJECT, False)
-        return
-    base(self)
 

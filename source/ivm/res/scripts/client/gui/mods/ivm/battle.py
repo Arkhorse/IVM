@@ -1,8 +1,5 @@
 import BigWorld
-# Disable Starting hint
-from gui.Scaleform.daapi.view.battle.shared.hint_panel.plugins import PreBattleHintPlugin
 # Disable destroyed messages imports
-from gui.Scaleform.daapi.view.battle.shared.messages.fading_messages import FadingMessages
 from constants import ARENA_GUI_TYPE
 from Vehicle import Vehicle
 from gui.Scaleform.daapi.view.battle.shared.battle_timers import PreBattleTimer
@@ -23,20 +20,19 @@ class ivmBattle(PYmodsConfigInterface):
         self.ID = 'ivmBattle'
         self.version = CORE.Version
         self.modsGroups = 'IVM'
+        self.modSettingsID = 'BattleUI'
         self.currentFPS = CORE.MaxFPS
-        self.data = {'enabled': True, 'questHintEnabled': True, 'notShowBattleMessage': True, 'enableAutoSpeed': True}#, 'setMaxFPS': self.currentFPS}
+        self.data = {'enabled': True, 
+        'enableAutoSpeed': True
+        }#, 'setMaxFPS': self.currentFPS}
         super(ivmBattle, self).init()
 
     def loadLang(self):
         if self.lang == 'en':
             self.i18n = {
-                # UI_setting__text
-                # UI_setting__tooltip
+                # 'UI_setting_hideHelpScreen_text': '',
+                # 'UI_setting_hideHelpScreen_tooltip': ''
                 'name': 'Battle Options',
-                'UI_setting_questHintEnabled_text': 'Disable Mission Popup.',
-                'UI_setting_questHintEnabled_tooltip': 'This will disable the mission popup at the start of battle.',
-                'UI_setting_notShowBattleMessage_text': 'Disable Destroyed Tanks Message.',
-                'UI_setting_notShowBattleMessage_tooltip': 'This will disable the messages for destroyed tanks above the minimap.',
                 'UI_setting_enableAutoSpeed_text': 'Start Battle In Speed Mode For Wheeled \"Tanks\".',
                 'UI_setting_enableAutoSpeed_tooltip': 'Always start in the speed mode for wheeled tanks with this.',
                 #'UI_setting_setMaxFPS_text': 'Max Framerate',
@@ -47,39 +43,15 @@ class ivmBattle(PYmodsConfigInterface):
         return {
             'modDisplayName': self.i18n['name'],
             'enabled': self.data['enabled'],
-            'column1': [self.tb.createControl('questHintEnabled'), self.tb.createControl('notShowBattleMessage')],
-            'column2': [self.tb.createControl('enableAutoSpeed')]#, self.tb.createControl('setMaxFPS', self.tb.types.TextInput, 80)]
+            'column1': [self.tb.createControl('enableAutoSpeed')]#, self.tb.createControl('setMaxFPS', self.tb.types.TextInput, 80)]
         }
 
-config = ivmBattle()
-questHintEnabled = config.data['questHintEnabled']
-notShowBattleMessage = config.data['notShowBattleMessage']
-enableAutoSpeed = config.data['enableAutoSpeed']
-# setMaxFPS = config.data['setMaxFPS']
-
-#oldQuestHint_WG = PreBattleHintPlugin._PreBattleHintPlugin__canDisplayQuestHint
-@overrideMethod(PreBattleHintPlugin, '_PreBattleHintPlugin__canDisplayQuestHint')
-def ivmQuestHint(base, self):
-    #oldQuestHint_WG(self)
-    if not questHintEnabled:
-        print '[IVM] Quest Hint Skipped'
-        return base(self)
-    else:
-        print '[IVM][LOAD] Missions Hint Panel Disabled'
-        return None
-#PreBattleHintPlugin._PreBattleHintPlugin__canDisplayQuestHint = ivmQuestHint
-
-
-@overrideMethod(FadingMessages, 'showMessage')
-def FadingMessages_showMessage(base, self, key, args=None, extra=None, postfix=''):
-    if not notShowBattleMessage or CORE.FrontlineBattleType:
-        return base(self, key, args=None, extra=None, postfix='')
-    pass
+c1 = ivmBattle()
 
 isWheeledTech = False
 @registerEvent(Vehicle, 'onEnterWorld')
 def Vehicle_onEnterWorld(self, prereqs):
-    if not enableAutoSpeed:
+    if not c1.data['enableAutoSpeed']:
         return
     global isWheeledTech
     if self.isPlayerVehicle:
@@ -92,7 +64,7 @@ def Vehicle_onEnterWorld(self, prereqs):
 
 @registerEvent(PreBattleTimer, 'hideCountdown')
 def hideCountdown(self, state, speed):
-    if not enableAutoSpeed:
+    if not c1.data['enableAutoSpeed']:
         return
     if state == 3 and isWheeledTech:
         BigWorld.player().base.vehicle_changeSetting(VEHICLE_SETTING.SIEGE_MODE_ENABLED, True)

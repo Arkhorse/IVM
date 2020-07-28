@@ -17,7 +17,6 @@ class ivmSound(PYmodsConfigInterface):
     def init(self):
         self.ID = 'ivmSound'
         self.version = CORE.Version
-        self.modsGroups = 'IVM'
         self.data = {
             'enabled': True,
             'fireEnabled': True,
@@ -37,24 +36,35 @@ class ivmSound(PYmodsConfigInterface):
                 'UI_setting_fireEnabled_text': 'Enable Fire Sound',
                 'UI_setting_stunEnabled_text': 'Enable Stun Sound',
                 'UI_setting_emptyShellsEnabled_text': 'Enable Shell Alert Sounds',
-                'UI_setting_fireEvent_text': 'Fire Event is ' + self.data['fireEvent'],
-                'UI_setting_stunEvent_text': 'Stun Event is ' + self.data['stunEvent'],
-                'UI_setting_almostOutEvent_text': 'Almost Out Event is ' + self.data['almostOutEvent'],
-                'UI_setting_emptyShellsEvent_text': 'Empty Shells Event is ' + self.data['emptyShellsEvent']
+                'UI_setting_fireEvent_text': 'Fire Event',
+                'UI_setting_fireEvent_tooltip': 'Dont change this unless you know what you are doing!',
+                'UI_setting_stunEvent_text': 'Stun Event',
+                'UI_setting_stunEvent_tooltip': 'Dont change this unless you know what you are doing!',
+                'UI_setting_almostOutEvent_text': 'Almost Out Event',
+                'UI_setting_almostOutEvent_tooltip': 'Dont change this unless you know what you are doing!',
+                'UI_setting_emptyShellsEvent_text': 'Empty Shells Event',
+                'UI_setting_emptyShellsEvent_tooltip': 'Dont change this unless you know what you are doing!',
             }
     
     def createTemplate(self):
         return {
             'modDisplayName': self.i18n['name'],
             'enabled': self.data['enabled'],
-            'column1': [self.tb.createControl('fireEnabled'), self.tb.createControl('stunEnabled'), self.tb.createControl('emptyShellsEnabled')],
-            'column2': [self.tb.createLabel('fireEvent'), self.tb.createLabel('stunEvent'), self.tb.createLabel('emptyShellsEvent'), self.tb.createLabel('almostOutEvent')]
+            'column1': [
+                self.tb.createControl('fireEnabled'), 
+                self.tb.createControl('stunEnabled'), 
+                self.tb.createControl('emptyShellsEnabled')
+                ],
+            'column2': [
+                self.tb.createControl('fireEvent', self.tb.types.TextInput, 400), 
+                self.tb.createControl('stunEvent', self.tb.types.TextInput, 400), 
+                self.tb.createControl('emptyShellsEvent', self.tb.types.TextInput, 400), 
+                self.tb.createControl('almostOutEvent', self.tb.types.TextInput, 400)
+                ]
         }
 
     def onApplySettings(self, settings):
-        super(ivmSound, self).onApplySettings(settings)
-        settings = self.data
-        self.displayed = not settings
+        pass
 
 config = ivmSound()
 fireEnabled = config.data['fireEnabled']

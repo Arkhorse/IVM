@@ -5,9 +5,9 @@ from .Core import CORE, overrideMethod
 import traceback
 
 import base64
+import constants
 import debug_utils
 from account_helpers.CustomFilesCache import CustomFilesCache
-
 
 @overrideMethod(CustomFilesCache, '_CustomFilesCache__onReadLocalFile')
 def _CustomFilesCache__onReadLocalFile(base, self, url, showImmediately):
@@ -22,3 +22,11 @@ def _CustomFilesCache__onReadLocalFile(base, self, url, showImmediately):
             base(self, url, showImmediately)
         except Exception:
             print(traceback.format_exc())
+
+#@overrideMethod(debug_utils, '_doLog')
+#def _doLog(base, category, msg, *args, **kwargs):
+    #if CORE.realmCT:
+        #if category == 'DEBUG':
+            #if msg == '_updateToLatestVersion':
+                #return
+    #base(category, msg, args, kwargs)
