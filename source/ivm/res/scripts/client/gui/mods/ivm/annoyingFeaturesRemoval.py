@@ -236,19 +236,11 @@ def _populate(base, self):
         return
     base(self)
 
-
-def hideSessionStatsHint():
-    settingsCore = dependency.instance(ISettingsCore)
-    settingsCore.serverSettings.setOnceOnlyHintsSettings({'SessionStatsOpenBtnHint': 1})
-    settingsCore.serverSettings.setOnceOnlyHintsSettings({'SessionStatsSettingsBtnHint': 1})
-    settingsCore.serverSettings.setSessionStatsSettings({'OnlyOnceHintShownField': 1})
-
-
 @overrideMethod(MessengerBar, '_MessengerBar__updateSessionStatsBtn')
 def updateSessionStatsBtn(base, self):
     if c2.data['hideSessionStatsButton'] or c2.data['hideAll']:
         self.as_setSessionStatsButtonVisibleS(False)
-        hideSessionStatsHint()
+        self._MessengerBar__onSessionStatsBtnOnlyOnceHintHidden(True) # hide display session statistics help hints
         return
     base(self)
 
