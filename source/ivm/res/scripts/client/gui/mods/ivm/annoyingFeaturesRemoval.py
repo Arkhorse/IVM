@@ -5,7 +5,7 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
 
     def init(self):
         self.ID = 'annoyingFeatureRemoval'
-        self.version = CORE.Version
+        self.version = CORE.Version[1]
         self.data = {
             'enabled': True,
             'hideAll': False,
@@ -159,6 +159,7 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
         }
 
     def onApplySettings(self, settings):
+        super(annoyingFeatureRemoval, self).onApplySettings(settings)
         pass
 
 c2 = annoyingFeatureRemoval()
