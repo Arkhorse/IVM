@@ -5,7 +5,7 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
 
     def init(self):
         self.ID = 'annoyingFeatureRemoval'
-        self.version = CORE.Version
+        self.version = CORE.Version[1]
         self.data = {
             'enabled': True,
             'hideAll': False,
@@ -26,6 +26,7 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
             'hideDailyQuestWidget': False,
             'hideTenYearsBanner': False,
             'hideBattleCommunication': False,
+            'hideProgressiveDecalsWindow': False,
             'Translator': 'The Illusion'
         }
         super(annoyingFeatureRemoval, self).init()
@@ -79,8 +80,10 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
                 'UI_setting_hidePiggyBankWindow_text': 'Hide Piggy Bank',
                 'UI_setting_hidePiggyBankWindow_tooltip': 'Why would you want to do this? Free money...',
                 'UI_setting_tempOptions_text': 'Temporary Options',
-                'UI_setting_hideBattleCommunication_text': 'Hide The Hint About The New Battle Communication.',
-                'UI_setting_hideBattleCommunication_tooltip': ''
+                'UI_setting_hideBattleCommunication_text': 'Hide The Hint About The New Battle Communication',
+                'UI_setting_hideBattleCommunication_tooltip': '',
+                'UI_setting_hideProgressiveDecalsWindow_text': 'Hide Info Windows When Receiving Progressive Decals',
+                'UI_setting_hideProgressiveDecalsWindow_tooltip': ''
             }
         if self.lang == 'ru':
             self.i18n = {
@@ -105,7 +108,9 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
                 'UI_setting_hideGeneralChat_text': 'Hide General Chat Button',
                 'UI_setting_hideGeneralChat_tooltip': 'Finally! No more idiots!',
                 'UI_setting_hideBattleCommunication_text': 'Hide The Hint About The New Battle Communication.',
-                'UI_setting_hideBattleCommunication_tooltip': ''
+                'UI_setting_hideBattleCommunication_tooltip': '',
+                'UI_setting_hideProgressiveDecalsWindow_text': 'Hide Info Windows When Receiving Progressive Decals',
+                'UI_setting_hideProgressiveDecalsWindow_tooltip': ''
             }
         if self.lang == 'es':
             self.i18n = {
@@ -130,7 +135,9 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
                 'UI_setting_hideGeneralChat_text': 'Hide General Chat Button',
                 'UI_setting_hideGeneralChat_tooltip': 'Finally! No more idiots!',
                 'UI_setting_hideBattleCommunication_text': 'Hide The Hint About The New Battle Communication.',
-                'UI_setting_hideBattleCommunication_tooltip': ''
+                'UI_setting_hideBattleCommunication_tooltip': '',
+                'UI_setting_hideProgressiveDecalsWindow_text': 'Hide Info Windows When Receiving Progressive Decals',
+                'UI_setting_hideProgressiveDecalsWindow_tooltip': ''
             }
 
     def createTemplate(self):
@@ -162,11 +169,13 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
                 self.tb.createControl('hideCombatIntelCount'),
                 self.tb.createControl('hidePiggyBankWindow'),
                 self.tb.createControl('hideRankedResults'),
-                self.tb.createControl('hideDailyQuestWidget')
+                self.tb.createControl('hideDailyQuestWidget'),
+                self.tb.createControl('hideProgressiveDecalsWindow')
                 ]
         }
 
     def onApplySettings(self, settings):
+        super(annoyingFeatureRemoval, self).onApplySettings(settings)
         pass
 
 c2 = annoyingFeatureRemoval()
@@ -194,6 +203,7 @@ from gui.Scaleform.daapi.view.battle.shared.hint_panel.plugins import Trajectory
 from gui.Scaleform.daapi.view.battle.shared.messages.fading_messages import FadingMessages
 
 from gui.promo.hangar_teaser_widget import TeaserViewer
+from gui.game_control.AwardController import ProgressiveItemsRewardHandler
 
 from skeletons.account_helpers.settings_core import ISettingsCore
 from vehicle_systems.tankStructure import ModelStates
@@ -272,6 +282,13 @@ def updateTenYearsCountdownEntryPointVisibility(base, self):
         self.as_updateEventEntryPointS(HANGAR_ALIASES.TEN_YEARS_COUNTDOWN_ENTRY_POINT_INJECT, False)
         return
     base(self)
+
+# hide display pop-up window when receiving progressive decals
+@overrideMethod(ProgressiveItemsRewardHandler, '_showAward')
+def _showAward(base, self, ctx):
+    if c2.data['hideProgressiveDecalsWindow'] or c2.data['hideAll']:
+        return
+    base(self, ctx)
 
 # Battle
 
