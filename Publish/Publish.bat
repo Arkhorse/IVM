@@ -3,12 +3,12 @@ cls
 
 rem all my set variables. Makes my life easier.
 rem this is for "public" release. Not a Relhax folder structure.
-set "versiondir=1.9.1.2"
+set "versiondir=1.10.0.0"
 set "Dependencies=E:\Python\IVM\IVM\Dependencies"
 set "publishDir=E:\Python\IVM\IVM\Publish"
 rem possible states: Development, Beta, Released
 set "ivmStatus=Development"
-set "ivmVersion=0.05"
+set "ivmVersion=0.06"
 
 rem Remove old files
 

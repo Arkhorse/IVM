@@ -25,6 +25,8 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
             'hideBattleCount': False,
             'hideDailyQuestWidget': False,
             'hideTenYearsBanner': False,
+            'hideBattleCommunication': False,
+            'hideProgressiveDecalsWindow': False,
             'Translator': 'The Illusion'
         }
         super(annoyingFeatureRemoval, self).init()
@@ -77,7 +79,11 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
                 'UI_setting_hideCombatIntelCount_tooltip': '',
                 'UI_setting_hidePiggyBankWindow_text': 'Hide Piggy Bank',
                 'UI_setting_hidePiggyBankWindow_tooltip': 'Why would you want to do this? Free money...',
-                'UI_setting_tempOptions_text': 'Temporary Options'
+                'UI_setting_tempOptions_text': 'Temporary Options',
+                'UI_setting_hideBattleCommunication_text': 'Hide The Hint About The New Battle Communication',
+                'UI_setting_hideBattleCommunication_tooltip': '',
+                'UI_setting_hideProgressiveDecalsWindow_text': 'Hide Info Windows When Receiving Progressive Decals',
+                'UI_setting_hideProgressiveDecalsWindow_tooltip': ''
             }
         if self.lang == 'ru':
             self.i18n = {
@@ -100,7 +106,11 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
                 'UI_setting_hideReferalButton_text': 'Hide Referal Button',
                 'UI_setting_hideReferalButton_tooltip': '',
                 'UI_setting_hideGeneralChat_text': 'Hide General Chat Button',
-                'UI_setting_hideGeneralChat_tooltip': 'Finally! No more idiots!'
+                'UI_setting_hideGeneralChat_tooltip': 'Finally! No more idiots!',
+                'UI_setting_hideBattleCommunication_text': 'Hide The Hint About The New Battle Communication.',
+                'UI_setting_hideBattleCommunication_tooltip': '',
+                'UI_setting_hideProgressiveDecalsWindow_text': 'Hide Info Windows When Receiving Progressive Decals',
+                'UI_setting_hideProgressiveDecalsWindow_tooltip': ''
             }
         if self.lang == 'es':
             self.i18n = {
@@ -123,7 +133,11 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
                 'UI_setting_hideReferalButton_text': 'Hide Referal Button',
                 'UI_setting_hideReferalButton_tooltip': '',
                 'UI_setting_hideGeneralChat_text': 'Hide General Chat Button',
-                'UI_setting_hideGeneralChat_tooltip': 'Finally! No more idiots!'
+                'UI_setting_hideGeneralChat_tooltip': 'Finally! No more idiots!',
+                'UI_setting_hideBattleCommunication_text': 'Hide The Hint About The New Battle Communication.',
+                'UI_setting_hideBattleCommunication_tooltip': '',
+                'UI_setting_hideProgressiveDecalsWindow_text': 'Hide Info Windows When Receiving Progressive Decals',
+                'UI_setting_hideProgressiveDecalsWindow_tooltip': ''
             }
 
     def createTemplate(self):
@@ -139,6 +153,7 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
                 self.tb.createControl('hideHelpScreen'),
                 self.tb.createControl('hideSiegeIndicator'), 
                 self.tb.createControl('notShowBattleMessage'),
+                self.tb.createControl('hideBattleCommunication'),
                 self.tb.createLabel('sessionStats'),
                 self.tb.createControl('hideSessionStatsButton'),
                 self.tb.createControl('hideBattleCount'),
@@ -154,7 +169,8 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
                 self.tb.createControl('hideCombatIntelCount'),
                 self.tb.createControl('hidePiggyBankWindow'),
                 self.tb.createControl('hideRankedResults'),
-                self.tb.createControl('hideDailyQuestWidget')
+                self.tb.createControl('hideDailyQuestWidget'),
+                self.tb.createControl('hideProgressiveDecalsWindow')
                 ]
         }
 
@@ -187,6 +203,7 @@ from gui.Scaleform.daapi.view.battle.shared.hint_panel.plugins import Trajectory
 from gui.Scaleform.daapi.view.battle.shared.messages.fading_messages import FadingMessages
 
 from gui.promo.hangar_teaser_widget import TeaserViewer
+from gui.game_control.AwardController import ProgressiveItemsRewardHandler
 
 from skeletons.account_helpers.settings_core import ISettingsCore
 from vehicle_systems.tankStructure import ModelStates
@@ -237,19 +254,11 @@ def _populate(base, self):
         return
     base(self)
 
-
-def hideSessionStatsHint():
-    settingsCore = dependency.instance(ISettingsCore)
-    settingsCore.serverSettings.setOnceOnlyHintsSettings({'SessionStatsOpenBtnHint': 1})
-    settingsCore.serverSettings.setOnceOnlyHintsSettings({'SessionStatsSettingsBtnHint': 1})
-    settingsCore.serverSettings.setSessionStatsSettings({'OnlyOnceHintShownField': 1})
-
-
 @overrideMethod(MessengerBar, '_MessengerBar__updateSessionStatsBtn')
 def updateSessionStatsBtn(base, self):
     if c2.data['hideSessionStatsButton'] or c2.data['hideAll']:
         self.as_setSessionStatsButtonVisibleS(False)
-        hideSessionStatsHint()
+        self._MessengerBar__onSessionStatsBtnOnlyOnceHintHidden(True) # hide display session statistics help hints
         return
     base(self)
 
@@ -273,6 +282,13 @@ def updateTenYearsCountdownEntryPointVisibility(base, self):
         self.as_updateEventEntryPointS(HANGAR_ALIASES.TEN_YEARS_COUNTDOWN_ENTRY_POINT_INJECT, False)
         return
     base(self)
+
+# hide display pop-up window when receiving progressive decals
+@overrideMethod(ProgressiveItemsRewardHandler, '_showAward')
+def _showAward(base, self, ctx):
+    if c2.data['hideProgressiveDecalsWindow'] or c2.data['hideAll']:
+        return
+    base(self, ctx)
 
 # Battle
 
@@ -312,5 +328,11 @@ def MessengerBarMeta_as_setInitDataS(base, self, data):
     if c2.data['hideReferalButton'] or c2.data['hideAll'] and 'isReferralEnabled' in data:
         data['isReferralEnabled'] = False
     return base(self, data)
+
+@overrideMethod(PreBattleHintPlugin, '_PreBattleHintPlugin__canDisplayBattleCommunicationHint')
+def canDisplayBattleCommunicationHint(base, self):
+    if c2.data['hideBattleCommunication'] or c2.data['hideAll']:
+        return False
+    base(self)
 
 #######################################################################
