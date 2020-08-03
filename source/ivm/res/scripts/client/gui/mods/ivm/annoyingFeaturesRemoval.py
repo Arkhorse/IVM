@@ -25,6 +25,7 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
             'hideBattleCount': False,
             'hideDailyQuestWidget': False,
             'hideTenYearsBanner': False,
+            'hideBattleCommunication': False,
             'Translator': 'The Illusion'
         }
         super(annoyingFeatureRemoval, self).init()
@@ -77,7 +78,9 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
                 'UI_setting_hideCombatIntelCount_tooltip': '',
                 'UI_setting_hidePiggyBankWindow_text': 'Hide Piggy Bank',
                 'UI_setting_hidePiggyBankWindow_tooltip': 'Why would you want to do this? Free money...',
-                'UI_setting_tempOptions_text': 'Temporary Options'
+                'UI_setting_tempOptions_text': 'Temporary Options',
+                'UI_setting_hideBattleCommunication_text': 'Hide The Hint About The New Battle Communication.',
+                'UI_setting_hideBattleCommunication_tooltip': ''
             }
         if self.lang == 'ru':
             self.i18n = {
@@ -100,7 +103,9 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
                 'UI_setting_hideReferalButton_text': 'Hide Referal Button',
                 'UI_setting_hideReferalButton_tooltip': '',
                 'UI_setting_hideGeneralChat_text': 'Hide General Chat Button',
-                'UI_setting_hideGeneralChat_tooltip': 'Finally! No more idiots!'
+                'UI_setting_hideGeneralChat_tooltip': 'Finally! No more idiots!',
+                'UI_setting_hideBattleCommunication_text': 'Hide The Hint About The New Battle Communication.',
+                'UI_setting_hideBattleCommunication_tooltip': ''
             }
         if self.lang == 'es':
             self.i18n = {
@@ -123,7 +128,9 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
                 'UI_setting_hideReferalButton_text': 'Hide Referal Button',
                 'UI_setting_hideReferalButton_tooltip': '',
                 'UI_setting_hideGeneralChat_text': 'Hide General Chat Button',
-                'UI_setting_hideGeneralChat_tooltip': 'Finally! No more idiots!'
+                'UI_setting_hideGeneralChat_tooltip': 'Finally! No more idiots!',
+                'UI_setting_hideBattleCommunication_text': 'Hide The Hint About The New Battle Communication.',
+                'UI_setting_hideBattleCommunication_tooltip': ''
             }
 
     def createTemplate(self):
@@ -139,6 +146,7 @@ class annoyingFeatureRemoval(PYmodsConfigInterface):
                 self.tb.createControl('hideHelpScreen'),
                 self.tb.createControl('hideSiegeIndicator'), 
                 self.tb.createControl('notShowBattleMessage'),
+                self.tb.createControl('hideBattleCommunication'),
                 self.tb.createLabel('sessionStats'),
                 self.tb.createControl('hideSessionStatsButton'),
                 self.tb.createControl('hideBattleCount'),
@@ -303,5 +311,11 @@ def MessengerBarMeta_as_setInitDataS(base, self, data):
     if c2.data['hideReferalButton'] or c2.data['hideAll'] and 'isReferralEnabled' in data:
         data['isReferralEnabled'] = False
     return base(self, data)
+
+@overrideMethod(PreBattleHintPlugin, '_PreBattleHintPlugin__canDisplayBattleCommunicationHint')
+def canDisplayBattleCommunicationHint(base, self):
+    if c2.data['hideBattleCommunication'] or c2.data['hideAll']:
+        return False
+    base(self)
 
 #######################################################################
