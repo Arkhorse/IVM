@@ -10,6 +10,8 @@ from gui.Scaleform.genConsts.HANGAR_ALIASES import HANGAR_ALIASES
 from debug_utils import LOG_CURRENT_EXCEPTION
 from gui.Scaleform.daapi.view.lobby.hangar.Hangar import Hangar
 
+from messenger.proto.xmpp.xmpp_constants import CONTACT_LIMIT
+
 try:
     from PYmodsCore import PYmodsConfigInterface
 except ImportError:
@@ -24,14 +26,17 @@ class ivmGarage(PYmodsConfigInterface):
         self.carouselRows = 2
         self.data = {
             'enabled': True, 
-            'carEnabled': True, 
+            'carEnabled': False, 
             'carRows': 2, 
             'ivmUnanonymizer': False, 
             'removeBadges': False, 
             'showTenYearsBanner': True, 
             'notificationBlinking': True, 
             'showCustomizationCounter': True,
-            'notificationCounter': True
+            'notificationCounter': True,
+            'extendedRoster': False,
+            'rosterCount': 5000,
+            'blackListCount': 10000
             } 
         super(ivmGarage, self).init()
 
@@ -47,6 +52,8 @@ class ivmGarage(PYmodsConfigInterface):
                 'UI_setting_carEnabled_tooltip': '',
                 'UI_setting_carRows_text': 'Choose how many carousel rows you want',
                 'UI_setting_carRows_tooltip': 'To apply this, you MUST reload the game.',
+                'UI_setting_anonHeader_text': 'Anonymizer Options',
+                'UI_setting_anonHeader_tooltip': '',
                 'UI_setting_ivmUnanonymizer_text': 'Enable Unanonymizer',
                 'UI_setting_ivmUnanonymizer_tooltip': 'This will remove a players fake name, and show thier real IGN on the battle results.',
                 'UI_setting_removeBadges_text': 'Remove Badges',
@@ -60,7 +67,15 @@ class ivmGarage(PYmodsConfigInterface):
                 'UI_setting_showCustomizationCounter_text': 'Show Notification Counters',
                 'UI_setting_showCustomizationCounter_tooltip': 'Show notifications counters in some areas and on the button \"Exterior\".',
                 'UI_setting_updateCodeName_text': '%s Update' % (CORE.updateCodeName),
-                'UI_setting_updateCodeName_tooltip': ''
+                'UI_setting_updateCodeName_tooltip': '',
+                'UI_setting_rosterHeader_text': 'Extended Roster Options',
+                'UI_setting_rosterHeader_tooltip': 'Max Friends and Max Blacklisted',
+                'UI_setting_extendedRoster_text': 'Enable',
+                'UI_setting_extendedRoster_tooltip': '',
+                'UI_setting_rosterCount_text': 'Friend Count',
+                'UI_setting_rosterCount_tooltip': '',
+                'UI_setting_blackListCount_text': 'Blacklist Count',
+                'UI_setting_blackListCount_tooltip': ''
                 }
 
     def createTemplate(self):
@@ -69,22 +84,27 @@ class ivmGarage(PYmodsConfigInterface):
             'enabled': self.data['enabled'],
             'column1': [
                 self.tb.createLabel('updateCodeName'),
-                self.tb.createLabel('garageLabel1'), 
-                self.tb.createControl('carEnabled'), 
-                self.tb.createControl('ivmUnanonymizer'), 
-                self.tb.createControl('notificationBlinking'), 
-                self.tb.createControl('notificationCounter')
+                self.tb.createLabel('garageLabel1'),
+                self.tb.createControl('carEnabled'),
+                self.tb.createSlider('carRows', vMin=0, vMax=12, value=2, formatStr='{{value}}', width=200, step=1, empty=False),
+                self.tb.createControl('notificationCounter'),
+                self.tb.createControl('showCustomizationCounter'),
+                self.tb.createControl('notificationBlinking')
                 ],
             'column2': [
-                self.tb.createSlider('carRows', vMin=0, vMax=12, value=2, formatStr='{{value}}', width=200, step=1, empty=False), 
-                self.tb.createControl('removeBadges'),  
-                self.tb.createControl('showCustomizationCounter')
+
+                self.tb.createLabel('anonHeader'),
+                self.tb.createControl('ivmUnanonymizer'),
+                self.tb.createControl('removeBadges'),
+                self.tb.createLabel('rosterHeader'),
+                self.tb.createControl('extendedRoster'),
+                self.tb.createControl('rosterCount', self.tb.types.TextInput, 80),
+                self.tb.createControl('blackListCount', self.tb.types.TextInput, 80)
                 ]
         }
 
     def onApplySettings(self, settings):
         super(ivmGarage, self).onApplySettings(settings)
-        self.carouselRows = self.data['carRows']
 
 config = ivmGarage()
 carEnabled = config.data['carEnabled']
@@ -95,6 +115,11 @@ notificationBlinking = config.data['notificationBlinking']
 showTenYearsBanner = config.data['showTenYearsBanner']
 showCustomizationCounter = config.data['showCustomizationCounter']
 notificationCounter = config.data['notificationCounter']
+extendedRoster = config.data['extendedRoster']
+
+if extendedRoster:
+    CONTACT_LIMIT.ROSTER_MAX_COUNT = config.data['rosterCount']
+    CONTACT_LIMIT.BLOCK_MAX_COUNT = config.data['blackListCount']
 
 # https://gitlab.com/xvm/xvm/-/blob/master/src/xpm/xvm_hangar/svcmsg.py
 @overrideMethod(NotificationListButton, 'as_setStateS')

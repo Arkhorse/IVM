@@ -3,7 +3,7 @@ cls
 rem Set Variables
 set "versiondir=1.10.0.0"
 set "Dependencies=E:\Python\IVM\IVM\Dependencies"
-set "gameDir=H:\World_of_Tanks_NA\"
+set "gameDir=I:\World_of_Tanks_NA\"
 
 rem Set Drive Letter
 e:

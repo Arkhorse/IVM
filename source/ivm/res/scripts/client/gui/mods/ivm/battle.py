@@ -23,7 +23,7 @@ class ivmBattle(PYmodsConfigInterface):
         self.modSettingsID = 'BattleUI'
         self.currentFPS = CORE.MaxFPS
         self.data = {'enabled': True, 
-        'enableAutoSpeed': True
+        'enableAutoSpeed': False
         }#, 'setMaxFPS': self.currentFPS}
         super(ivmBattle, self).init()
 
@@ -45,6 +45,10 @@ class ivmBattle(PYmodsConfigInterface):
             'enabled': self.data['enabled'],
             'column1': [self.tb.createControl('enableAutoSpeed')]#, self.tb.createControl('setMaxFPS', self.tb.types.TextInput, 80)]
         }
+    
+    def onApplySettings(self, settings):
+        super(ivmBattle, self).onApplySettings(settings)
+        pass
 
 c1 = ivmBattle()
 

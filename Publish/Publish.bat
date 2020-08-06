@@ -25,13 +25,13 @@ md "res_mods/%versiondir%/audioww/"
 echo "Copying Files"
 @echo off
 xcopy /v /y "%Dependencies%\izeberg.modsettingsapi_1.3.0.wotmod" "%publishDir%\mods\%versiondir%\"
-xcopy /v /y "%Dependencies%\poliroid.modslistapi_1.3.2.wotmod" "%publishDir%\mods\%versiondir%\"
+xcopy /v /y "%Dependencies%\poliroid.modslistapi_1.3.3.wotmod" "%publishDir%\mods\%versiondir%\"
 
 rem xCopy will make these folders. Found not already having the mods and res_mods folders made at the start causes issues
 xcopy /v /y "%Dependencies%\PYmodsCore.wotmod" "%publishDir%\mods\%versiondir%\PYmods\"
-xcopy /v /y "%Dependencies%\en.json" "%publishDir%\mods\configs\PYmods\PYmodsGUI\i18n\"
-xcopy /v /y "%Dependencies%\de.json" "%publishDir%\mods\configs\PYmods\PYmodsGUI\i18n\"
-xcopy /v /y "%Dependencies%\ru.json" "%publishDir%\mods\configs\PYmods\PYmodsGUI\i18n\"
+rem xcopy /v /y "%Dependencies%\en.json" "%publishDir%\mods\configs\PYmods\PYmodsGUI\i18n\"
+rem xcopy /v /y "%Dependencies%\de.json" "%publishDir%\mods\configs\PYmods\PYmodsGUI\i18n\"
+rem xcopy /v /y "%Dependencies%\ru.json" "%publishDir%\mods\configs\PYmods\PYmodsGUI\i18n\"
 
 rem This makes my wotmod, so I dont need to run yet another bat to do this. Deja Vue...
 rem The compiling is done using a py, as the bat method isnt as short. Plus its part of my work space in VS, so I dont need to open it

@@ -64,6 +64,7 @@ class ivmSound(PYmodsConfigInterface):
         }
 
     def onApplySettings(self, settings):
+        super(ivmSound, self).onApplySettings(settings)
         pass
 
 config = ivmSound()
