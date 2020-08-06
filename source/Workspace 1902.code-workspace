@@ -13,9 +13,6 @@
 			"path": "ivm\\res\\scripts\\client\\gui\\mods\\ivm"
 		},
 		{
-			"path": "..\\..\\..\\..\\Relhax\\WorldOfTanks-Decompiled\\source\\res\\scripts\\client"
-		},
-		{
 			"path": "..\\Publish"
 		}
 	],

@@ -58,7 +58,7 @@ from time import sleep
 
 if not garage or not sound or not battle or not annoyingFeatures:
     #CORE.addSystemMessage_Error('IVM Failed to load')
-    print CORE.ModIDShort, 'Modules Not Found, Redownload Mod @ %s' % (CORE.downloadURL)
+    print CORE.ModIDShort, 'Modules Not Found, Redownload Mod'
 else:
     #CORE.addSystemMessage_GameGreeting('[IVM] Loaded. Have fun. Don\'t get artied')
     print CORE.ModIDShort, 'Loaded', 'Version', CORE.Version[1]
