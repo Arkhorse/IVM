@@ -1,8 +1,8 @@
 import os
 
 from account import PlayerAccount
-from .ivm.Core import CORE
-from .ivm.fixes import *
+from gui.mods.ivm.Core import CORE
+from gui.mods.ivm.fixes import *
 
 # CORE.printLoadMessage('IVM', '       ', buildDate='July 12th, 2020')
 
@@ -16,7 +16,7 @@ battle = True
 annoyingFeatures = True
 
 try:
-    from .ivm.ivmGarage import *
+    from gui.mods.ivm.ivmGarage import *
     print CORE.ModIDShort, 'Garage Module Found'
 except ImportError:
     garage = False
@@ -24,23 +24,23 @@ except ImportError:
     pass
 
 try:
-    from .ivm.battle import *
+    from gui.mods.ivm.battle import *
     print CORE.ModIDShort, 'Battle Module Found'
 except ImportError:
     battle = False
     print CORE.ModIDShort, 'Battle Module Not Found'
     pass
 
-try:
-    from .ivm.sound import *
-    print CORE.ModIDShort, 'Sound Module Found'
-except ImportError:
-    sound = False
-    print CORE.ModIDShort, 'Sound Module Not Found'
-    pass
+# try:
+from gui.mods.ivm.soundModule import ivmSound, ivm_setFireInVehicle, ivm_stunSound, ivm_getShells
+#     print CORE.ModIDShort, 'Sound Module Found'
+# except ImportError:
+#     sound = False
+#     print CORE.ModIDShort, 'Sound Module Not Found'
+#     pass
 
 try:
-    from .ivm.annoyingFeaturesRemoval import *
+    from gui.mods.ivm.annoyingFeaturesRemoval import *
     print CORE.ModIDShort, 'Annoying Features Module Found'
 except ImportError:
     annoyingFeatures = False

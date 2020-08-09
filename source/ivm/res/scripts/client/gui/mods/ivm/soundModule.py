@@ -1,16 +1,13 @@
+import BigWorld
 from gui.battle_control.controllers.consumables import ammo_ctrl
 from gui.battle_control.controllers.consumables.ammo_ctrl import AmmoController, _GunSettings
-from gui.Scaleform.daapi.view.battle.shared import destroy_timers_panel
-from gui.Scaleform.daapi.view.battle.shared.destroy_timers_panel import DestroyTimersPanel
+from gui.Scaleform.daapi.view.battle.shared import timers_panel
+from gui.Scaleform.daapi.view.battle.shared.timers_panel import TimersPanel
 from gui.Scaleform.daapi.view.battle.shared.crosshair.plugins import AmmoPlugin
 from debug_utils import LOG_CURRENT_EXCEPTION
-import BigWorld
 
 from .Core import overrideMethod, CORE
-try:
-    from PYmodsCore import PYmodsConfigInterface
-except ImportError:
-    print '%s Fatal Error! A dependency is not found' % (CORE.ModIDShort)
+from PYmodsCore import PYmodsConfigInterface
 
 class ivmSound(PYmodsConfigInterface):
 
@@ -76,7 +73,7 @@ emptyShellsEnabled = config.data['emptyShellsEnabled']
 emptyShellsEvent = config.data['emptyShellsEvent']
 almostOutEvent = config.data['almostOutEvent']
 
-@overrideMethod(DestroyTimersPanel, '_DestroyTimersPanel__setFireInVehicle')
+@overrideMethod(TimersPanel, '_TimersPanel__setFireInVehicle')
 def ivm_setFireInVehicle(base, self, isInFire):
     try:
         if not fireEnabled:
@@ -95,7 +92,7 @@ def ivm_setFireInVehicle(base, self, isInFire):
         LOG_CURRENT_EXCEPTION()
     print '[IVM][LOAD] IVM Fire Sound Loaded'
 
-@overrideMethod(DestroyTimersPanel, '_DestroyTimersPanel__showStunTimer')
+@overrideMethod(TimersPanel, '_TimersPanel__showStunTimer')
 def ivm_stunSound(base, self, value):
     try:
         if not stunEnabled:
