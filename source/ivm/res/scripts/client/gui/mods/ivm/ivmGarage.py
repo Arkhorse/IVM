@@ -36,7 +36,10 @@ class ivmGarage(PYmodsConfigInterface):
             'notificationCounter': True,
             'extendedRoster': False,
             'rosterCount': 5000,
-            'blackListCount': 10000
+            'blackListCount': 10000,
+            'extendedTooltips': False,
+            'extendedTooltips_MAXLIST_Module': 1000,
+            'extendedTooltips_MAXLIST_Booster': 1000
             } 
         super(ivmGarage, self).init()
 
@@ -75,7 +78,15 @@ class ivmGarage(PYmodsConfigInterface):
                 'UI_setting_rosterCount_text': 'Friend Count',
                 'UI_setting_rosterCount_tooltip': '',
                 'UI_setting_blackListCount_text': 'Blacklist Count',
-                'UI_setting_blackListCount_tooltip': ''
+                'UI_setting_blackListCount_tooltip': '',
+                'UI_setting_extendedTooltipsLabel_text': 'Extended Tooltips',
+                'UI_setting_extendedTooltipsLabel_tooltip': '',
+                'UI_setting_extendedTooltips_text': 'Enable',
+                'UI_setting_extendedTooltips_tooltip': '',
+                'UI_setting_extendedTooltips_MAXLIST_Module_text': 'Maximum Modules',
+                'UI_setting_extendedTooltips_MAXLIST_Module_tooltip': 'This is for the modules. What most people use this mod for. Higher = More modules shown in the tooltip.',
+                'UI_setting_extendedTooltips_MAXLIST_Booster_text': 'Maximum Boosters',
+                'UI_setting_extendedTooltips_MAXLIST_Booster_tooltip': 'This will increase the shown boosters.'
                 }
 
     def createTemplate(self):
@@ -92,14 +103,17 @@ class ivmGarage(PYmodsConfigInterface):
                 self.tb.createControl('notificationBlinking')
                 ],
             'column2': [
-
                 self.tb.createLabel('anonHeader'),
                 self.tb.createControl('ivmUnanonymizer'),
                 self.tb.createControl('removeBadges'),
                 self.tb.createLabel('rosterHeader'),
                 self.tb.createControl('extendedRoster'),
                 self.tb.createControl('rosterCount', self.tb.types.TextInput, 80),
-                self.tb.createControl('blackListCount', self.tb.types.TextInput, 80)
+                self.tb.createControl('blackListCount', self.tb.types.TextInput, 80),
+                self.tb.createLabel('extendedTooltipsLabel'),
+                self.tb.createControl('extendedTooltips'),
+                self.tb.createControl('extendedTooltips_MAXLIST_Module', self.tb.types.TextInput, 80),
+                self.tb.createControl('extendedTooltips_MAXLIST_Booster', self.tb.types.TextInput, 80)
                 ]
         }
 
@@ -155,7 +169,7 @@ def __setNotificationCounters(base, self):
 
 @overrideMethod(TankCarouselMeta, 'as_rowCountS')
 def ivmCarouselS(base, self, value):
-    if not carEnabled:
+    if not carEnabled or not config.data['enabled']:
         if CORE.debug:
             print '[IVM] Carousels Not Enabled'
         return base(self, value)
@@ -165,6 +179,33 @@ def ivmCarouselS(base, self, value):
 #TankCarouselMeta.as_rowCountS = ivmCarouselS
 #override(TankCarouselMeta, 'as_rowCountS', ivmCarouselS)
 
+from gui.shared.tooltips.module import ModuleTooltipBlockConstructor
+from gui.shared.tooltips import battle_booster
+from gui.Scaleform.daapi.view.lobby.storage import storage_helpers
+
+@overrideMethod(storage_helpers, 'createStorageDefVO')
+def createStorageDefVO(base, itemID, title, description, count, price, image, imageAlt, itemType='', nationFlagIcon='', enabled=True, contextMenuId=''):
+    if not config.data['extendedTooltips'] or not config.data['enabled']:
+        base(itemID, title, description, count, price, image, imageAlt, itemType='', nationFlagIcon='', enabled=True, contextMenuId='')
+    b = []
+    for priced in price['price']:
+        b.append((priced[0], priced[1] * count))
+    price['price'] = tuple(b)
+    return {'id': itemID,
+     'title': title,
+     'description': description,
+     'count': count,
+     'price': price,
+     'image': image,
+     'imageAlt': imageAlt,
+     'type': itemType,
+     'nationFlagIcon': nationFlagIcon,
+     'enabled': enabled,
+     'contextMenuId': contextMenuId}
+
+if config.data['extendedTooltips']:
+    ModuleTooltipBlockConstructor.MAX_INSTALLED_LIST_LEN = config.data['extendedTooltips_MAXLIST_Module']
+    battle_booster._MAX_INSTALLED_LIST_LEN = config.data['extendedTooltips_MAXLIST_Booster']
 
 # ivmUAVO is based on RaJCel code. Really great guy. Go use his mods: https://wgmods.net/search/?owner=219030
 from gui.battle_results.service import BattleResultsService
