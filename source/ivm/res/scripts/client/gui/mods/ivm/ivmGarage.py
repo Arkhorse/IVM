@@ -30,7 +30,6 @@ class ivmGarage(PYmodsConfigInterface):
             'carRows': 2, 
             'ivmUnanonymizer': False, 
             'removeBadges': False, 
-            'showTenYearsBanner': True, 
             'notificationBlinking': True, 
             'showCustomizationCounter': True,
             'notificationCounter': True,
@@ -63,8 +62,6 @@ class ivmGarage(PYmodsConfigInterface):
                 'UI_setting_removeBadges_tooltip': 'This requires Unanonymizer.',
                 'UI_setting_notificationBlinking_text': 'Notification Status',
                 'UI_setting_notificationBlinking_tooltip': 'Turn this to off if you dont want blinking notifications',
-                'UI_setting_showTenYearsBanner_text': 'Show 10 Years Banner',
-                'UI_setting_showTenYearsBanner_tooltip': 'Annoyed by the 10 years banner? Turn it off!',
                 'UI_setting_notificationCounter_text': 'Enable Notification Counter Options',
                 'UI_setting_notificationCounter_tooltip': '',
                 'UI_setting_showCustomizationCounter_text': 'Show Notification Counters',
@@ -126,7 +123,6 @@ carRows = config.data['carRows']
 ivmUnanonymizer = config.data['ivmUnanonymizer']
 removeBadges = config.data['removeBadges']
 notificationBlinking = config.data['notificationBlinking']
-showTenYearsBanner = config.data['showTenYearsBanner']
 showCustomizationCounter = config.data['showCustomizationCounter']
 notificationCounter = config.data['notificationCounter']
 extendedRoster = config.data['extendedRoster']
