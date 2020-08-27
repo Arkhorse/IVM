@@ -26,7 +26,8 @@ class ivmGarage(PYmodsConfigInterface):
         self.carouselRows = 2
         self.data = {
             'enabled': True, 
-            'carEnabled': False, 
+            'carEnabled': False,
+            'carSmall': False,
             'carRows': 2, 
             'ivmUnanonymizer': False, 
             'removeBadges': False, 
@@ -46,7 +47,7 @@ class ivmGarage(PYmodsConfigInterface):
         if self.lang == 'en':
             self.i18n = {
                 # 'UI_setting__text': '',
-                # 'UI_setting__tooltip': ''
+                # 'UI_setting__tooltip': '',
                 'name': 'Garage Options',
                 'UI_setting_garageLabel1_text': 'Note: All settings require a full game reload to apply',
                 'UI_setting_garageLabel1_tooltip': 'This is due to coding limitations at this time.',
@@ -54,6 +55,8 @@ class ivmGarage(PYmodsConfigInterface):
                 'UI_setting_carEnabled_tooltip': '',
                 'UI_setting_carRows_text': 'Choose how many carousel rows you want',
                 'UI_setting_carRows_tooltip': 'To apply this, you MUST reload the game.',
+                # 'UI_setting_carSmall_text': '',
+                # 'UI_setting_carSmall_tooltip': '',
                 'UI_setting_anonHeader_text': 'Anonymizer Options',
                 'UI_setting_anonHeader_tooltip': '',
                 'UI_setting_ivmUnanonymizer_text': 'Enable Unanonymizer',
