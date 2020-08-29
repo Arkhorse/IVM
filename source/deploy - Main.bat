@@ -1,7 +1,7 @@
 cls
 @echo off
 rem Set Variables
-set "versiondir=1.10.0.0"
+set "versiondir=1.10.0.1"
 set "Dependencies=E:\Python\IVM\IVM\Dependencies"
 set "gameDir=I:\World_of_Tanks_NA\"
 

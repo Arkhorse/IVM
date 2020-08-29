@@ -21,7 +21,7 @@ class ivmBattle(PYmodsConfigInterface):
         self.version = CORE.Version
         self.modsGroups = 'IVM'
         self.modSettingsID = 'BattleUI'
-        self.currentFPS = CORE.MaxFPS
+        # self.currentFPS = CORE.MaxFPS
         self.data = {'enabled': True, 
         'enableAutoSpeed': False
         }#, 'setMaxFPS': self.currentFPS}

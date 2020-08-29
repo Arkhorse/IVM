@@ -39,11 +39,7 @@ class Core(object):
         self.RandomBattleType       = ARENA_BONUS_TYPE.REGULAR
         self.gameVersion            = ElementTree.parse('./paths.xml').find('Paths').find('Path').text.split("/")[-1]
         self.appdataPath            = unicode(wg_getPreferencesFilePath()).replace('/preferences.xml', '')
-        self.engineXML              = './res_mods/%s/engine_config.xml' % (self.gameVersion)
-        self.MaxFPS                 = ElementTree.parse(self.engineXML).find('renderer').find('maxFrameRate')
         self._VEHICLE_TYPE_XML_PATH = 'scripts/item_defs/vehicles/'
-        self.translationCodes       = ['en', 'es', 'ru']
-        self.en                     = '.mods/configs/ivm/en.json'
         super(Core, self).__init__()
 
     #def onHangarSpaceLoaded(self):
