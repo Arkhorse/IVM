@@ -222,7 +222,7 @@ ua = Unanonymizer
 def ivmUAVO(base, self, arenaUniqueID):
     if not ivmUnanonymizer:
         return base(self, arenaUniqueID)
-    vo = BattleResultsService.getResultsVO
+    vo = base(self, arenaUniqueID)
     try:
         for player in (vo['team1'] + vo['team2']):
             if not removeBadges: player['badgeVO']['icon'] = ''
